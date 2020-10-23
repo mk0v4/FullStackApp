@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tasker.MVC", "Tasker.MVC\Tasker.MVC.csproj", "{9504E266-B433-4921-9289-5686FDA5FB46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tasker.Service", "Tasker.Service\Tasker.Service.csproj", "{E11F4AF6-58A8-4037-8EA2-3EFD4AF1E9D7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9504E266-B433-4921-9289-5686FDA5FB46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9504E266-B433-4921-9289-5686FDA5FB46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9504E266-B433-4921-9289-5686FDA5FB46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9504E266-B433-4921-9289-5686FDA5FB46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E11F4AF6-58A8-4037-8EA2-3EFD4AF1E9D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E11F4AF6-58A8-4037-8EA2-3EFD4AF1E9D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E11F4AF6-58A8-4037-8EA2-3EFD4AF1E9D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E11F4AF6-58A8-4037-8EA2-3EFD4AF1E9D7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {39B5561C-298C-4B31-B8BB-81D002F95B9E}
+	EndGlobalSection
+EndGlobal
