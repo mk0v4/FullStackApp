@@ -11,7 +11,7 @@ using Tasker.Service.DataAccess.Interface;
 
 namespace Tasker.Service.DataAccess
 {
-    public class GenericDataService<T> : IGenericDataService<T> where T : Entity
+    public abstract class GenericDataService<T> : IGenericDataService<T> where T : Entity
     {
         private readonly IApplicationDbContext _dbContext;
         public GenericDataService(IApplicationDbContext context)
@@ -19,7 +19,7 @@ namespace Tasker.Service.DataAccess
             this._dbContext = context;
         }
 
-        public async Task<int> Create<TEntity>(T entity) where TEntity : Entity
+        public async Task<int> Create<E>(T entity) where E : Entity
         {
             _dbContext.Set<T>().Add(entity);
             return await _dbContext.SaveChangesAsync();
@@ -38,7 +38,7 @@ namespace Tasker.Service.DataAccess
             return entity;
         }
 
-        public async Task<T> Update<TEntity>(T entity) where TEntity : Entity
+        public async Task<T> Update<E>(T entity) where E : Entity
         {
             _dbContext.Set<T>().AddOrUpdate(entity);
             await _dbContext.SaveChangesAsync();

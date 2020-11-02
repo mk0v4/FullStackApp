@@ -73,7 +73,7 @@ namespace Tasker.MVC.App_Start
         {
             //TODO - inject
             kernel.Bind<IApplicationDbContext>().To<ApplicationDbContext>().InRequestScope();
-            kernel.Bind(typeof(IGenericDataService<>)).To(typeof(GenericDataService<>));
+            kernel.Bind(typeof(IGenericDataService<Project>)).To(typeof(GenericDataService<Project>));
             kernel.Bind<IProjectController>().To<ProjectController>();
             kernel.Bind<IProjectService>().To<ProjectService>();
             kernel.Bind<IProjectModel>().To<ProjectModel>();
