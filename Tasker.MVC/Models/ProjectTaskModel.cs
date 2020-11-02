@@ -6,7 +6,7 @@ using Tasker.MVC.Models.Interface;
 
 namespace Tasker.MVC.Models
 {
-    public class TaskModel : ITaskModel
+    public class ProjectTaskModel : IProjectTaskModel
     {
         public string Name { get; set; }
         public DateTime? DueDate { get; set; }

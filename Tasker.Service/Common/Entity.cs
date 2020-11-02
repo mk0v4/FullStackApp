@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tasker.Service.Models
+namespace Tasker.Service.Common
 {
     public abstract class Entity
     {

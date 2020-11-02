@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using Tasker.MVC.Models.Interface;
 
-namespace Tasker.MVC.Models
+namespace Tasker.MVC.Interface
 {
     public class TimeEntryModel : ITimeEntryModel
     {

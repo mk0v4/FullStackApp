@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tasker.Service.DataAccess.Interface
+namespace Tasker.MVC.Controllers.Interface
 {
-    public interface IDbContext
+    interface IProjectController
     {
     }
 }

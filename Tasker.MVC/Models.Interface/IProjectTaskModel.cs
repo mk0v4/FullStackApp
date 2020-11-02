@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Tasker.MVC.Models.Interface
 {
-    public interface ITaskModel
+    public interface IProjectTaskModel
     {
         string Name { get; set; }
         DateTime? DueDate { get; set; }

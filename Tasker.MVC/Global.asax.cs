@@ -20,15 +20,13 @@ namespace Tasker.MVC
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Project, IProjectModel>();
-                cfg.CreateMap<Task, ITaskModel>();
-                cfg.CreateMap<TimeEntry, ITimeEntryModel>();
+                cfg.CreateMap<Project, IProjectModel>().ReverseMap();
+                cfg.CreateMap<ProjectTask, IProjectTaskModel>().ReverseMap();
+                cfg.CreateMap<TimeEntry, ITimeEntryModel>().ReverseMap();
             });
-
-            var mapper = config.CreateMapper();
-
         }
     }
 }

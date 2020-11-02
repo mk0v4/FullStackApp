@@ -13,6 +13,6 @@ namespace Tasker.MVC.Models
         public int Priority { get; set; }
         public bool Completed { get; set; }
         public string Description { get; set; }
-        public ICollection<ITaskModel> Tasks { get; set; }
+        public ICollection<IProjectTaskModel> Tasks { get; set; }
     }
 }

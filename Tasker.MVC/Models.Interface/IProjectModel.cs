@@ -13,6 +13,6 @@ namespace Tasker.MVC.Models.Interface
         DateTime? DueDate { get; set; }
         string Name { get; set; }
         int Priority { get; set; }
-        ICollection<ITaskModel> Tasks { get; set; }
+        ICollection<IProjectTaskModel> Tasks { get; set; }
     }
 }
