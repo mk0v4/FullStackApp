@@ -4,10 +4,10 @@
     ViewBag.Title = "Index";
 }
 
-<h2>View</h2>
+<h2>Projects</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New", "Create", "Project")
 </p>
 <table class="table">
     <tr>
@@ -38,13 +38,19 @@
             @Html.DisplayFor(modelItem => item.DueDate)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Priority)
+            @*@Html.DisplayFor(modelItem => item.Priority)*@
+            @Html.DropDownListFor(modelItem => item.Priority, new List<SelectListItem>
+                       {
+                           new SelectListItem {Text = "Low", Value = "1", Selected = item.Priority == 1 ? true : false },
+                           new SelectListItem {Text = "Medium", Value = "2", Selected = item.Priority == 2 ? true : false },
+                           new SelectListItem {Text = "High", Value = "3", Selected = item.Priority == 3 ? true : false },
+                       }, new { @class = "form-control", disabled = "disabled" })
         </td>
         <td>
-            @Html.CheckBoxFor(modelItem => item.Completed)
+            @Html.CheckBoxFor(modelItem => item.Completed, new {disabled = "disabled" })
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Description)
+            @Html.TextAreaFor(modelItem => item.Description, new { disabled = "disabled" })
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |

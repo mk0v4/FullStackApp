@@ -11,11 +11,6 @@ namespace Tasker.Service.Models
 {
     public class Project : Entity
     {
-        public Project()
-        {
-            Tasks = new HashSet<ProjectTask>();
-        }
-
         [Required]
         [MaxLength(200)]
         public string Name { get; set; }
@@ -25,6 +20,6 @@ namespace Tasker.Service.Models
         public bool Completed { get; set; }
         [MaxLength(1500)]
         public string Description { get; set; }
-        public ICollection<ProjectTask> Tasks { get; private set; }
+        public virtual ICollection<ProjectTask> Tasks { get; set; }
     }
 }

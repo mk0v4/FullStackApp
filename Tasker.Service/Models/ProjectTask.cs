@@ -11,11 +11,6 @@ namespace Tasker.Service.Models
 {
     public class ProjectTask : Entity
     {
-        public ProjectTask()
-        {
-            TimeEntries = new HashSet<TimeEntry>();
-        }
-
         [Required]
         [MaxLength(200)]
         public string Name { get; set; }
@@ -27,6 +22,8 @@ namespace Tasker.Service.Models
         //[Required]
         [MaxLength(1500)]
         public string Description { get; set; }
-        public ICollection<TimeEntry> TimeEntries { get; private set; }
+        public long ProjectId { get; set; }
+        public Project Project { get; set; }
+        public virtual ICollection<TimeEntry> TimeEntries { get; set; }
     }
 }

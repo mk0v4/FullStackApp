@@ -1,13 +1,13 @@
 ﻿@model Tasker.MVC.Models.Interface.IProjectModel
 
 @{
-    ViewBag.Title = "Add Project";
+    ViewBag.Title = "Create";
 }
 
-<h2>View</h2>
+<h2>Create Project</h2>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm("Create", "Project", FormMethod.Post)) 
 {
     @Html.AntiForgeryToken()
     
@@ -34,7 +34,12 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Priority, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Priority, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.DropDownListFor(model => model.Priority, new List<SelectListItem>
+                       {
+                           new SelectListItem {Text = "Low", Value = "1", Selected = true },
+                           new SelectListItem {Text = "Medium", Value = "2" },
+                           new SelectListItem {Text = "High", Value = "3" },
+                       }, new { @class = "form-control"})
                 @Html.ValidationMessageFor(model => model.Priority, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -42,7 +47,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Completed, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <div class="checkbox">
+                <div class="checkbox checkbox-inline">
                     @Html.EditorFor(model => model.Completed)
                     @Html.ValidationMessageFor(model => model.Completed, "", new { @class = "text-danger" })
                 </div>
@@ -52,7 +57,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.TextAreaFor(model => model.Description, htmlAttributes: new { @class = "col-md-10" })
                 @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
             </div>
         </div>

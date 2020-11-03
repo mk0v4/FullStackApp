@@ -82,8 +82,8 @@ namespace Tasker.MVC.App_Start
                     var config = new MapperConfiguration(cfg =>
                     {
                         cfg.CreateMap<Project, IProjectModel>().ReverseMap();
-                        cfg.CreateMap<ProjectTask, IProjectTaskModel>().ReverseMap();
-                        cfg.CreateMap<TimeEntry, ITimeEntryModel>().ReverseMap();
+                        //cfg.CreateMap<ProjectTask, IProjectTaskModel>().ReverseMap();
+                        //cfg.CreateMap<TimeEntry, ITimeEntryModel>().ReverseMap();
                         cfg.ConstructServicesUsing(t => kernel.Get(t));
                     });
                     return config.CreateMapper();

@@ -6,7 +6,6 @@ using System.Net.Http;
 using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Http;
 using System.Web.Mvc;
 using AutoMapper;
 using Ninject.Activation;
@@ -37,17 +36,22 @@ namespace Tasker.MVC.Controllers
             IEnumerable<Project> projects = await _projectService.GetAll();
             return View(_mapper.Map<IEnumerable<Project>, List<IProjectModel>>(projects));
         }
-
-        public async Task<ActionResult> Create(Project project)
+        public ActionResult Create()
         {
-            project = new Project();
-            project.Name = "name";
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Create(ProjectModel projectModel)
+        {
+            Project project = _mapper.Map<ProjectModel, Project>(projectModel);
 
-            await _projectService.Create(project);
-
-            //View();
-            //return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            return new HttpStatusCodeResult(HttpStatusCode.OK);
+            if (ModelState.IsValid)
+            {
+                await _projectService.Create(project);
+                return RedirectToAction("Index");
+            }
+            return View();
         }
     }
 }

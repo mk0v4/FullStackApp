@@ -7,13 +7,13 @@ namespace Tasker.Service.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class NamesRequired : IMigrationMetadata
+    public sealed partial class InitialDBCreation : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(NamesRequired));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialDBCreation));
         
         string IMigrationMetadata.Id
         {
-            get { return "202010221911121_NamesRequired"; }
+            get { return "202011022122474_InitialDBCreation"; }
         }
         
         string IMigrationMetadata.Source

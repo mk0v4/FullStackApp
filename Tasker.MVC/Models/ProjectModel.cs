@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using Tasker.MVC.Models.Interface;
@@ -8,6 +9,7 @@ namespace Tasker.MVC.Models
 {
     public class ProjectModel : IProjectModel
     {
+        public long Id { get; set; }
         public string Name { get; set; }
         public DateTime? DueDate { get; set; }
         public int Priority { get; set; }
