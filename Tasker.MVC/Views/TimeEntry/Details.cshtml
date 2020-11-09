@@ -1,0 +1,47 @@
+﻿@model Tasker.MVC.Models.TimeEntryModel
+
+@{
+    if (Model == null)
+    {
+        Response.Redirect("Errors/Error404");
+        return;
+    }
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Time Entry</h4>
+    @Html.ActionLink("Back to Task Details", "Details", "ProjectTask", new { id = Model.ProjectTaskId }, new { @class = "btn btn-info" })
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TimeSpent)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TimeSpent)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit Time Entry", "Update", new { id = Model.Id }, new { @class = "btn btn-success" })
+</p>

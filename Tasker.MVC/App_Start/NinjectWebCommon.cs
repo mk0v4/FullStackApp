@@ -74,16 +74,18 @@ namespace Tasker.MVC.App_Start
             //TODO - inject
             kernel.Bind<IApplicationDbContext>().To<ApplicationDbContext>().InRequestScope();
             kernel.Bind(typeof(IGenericDataService<Project>)).To(typeof(GenericDataService<Project>));
-            kernel.Bind<IProjectController>().To<ProjectController>();
+            //kernel.Bind<IProjectController>().To<ProjectController>();
             kernel.Bind<IProjectService>().To<ProjectService>();
-            kernel.Bind<IProjectModel>().To<ProjectModel>();
+            kernel.Bind<IProjectTaskService>().To<ProjectTaskService>();
+            kernel.Bind<ITimeEntryService>().To<TimeEntryService>();
+            //kernel.Bind<IProjectModel>().To<ProjectModel>();
             kernel.Bind<IMapper>().ToMethod(context =>
                 {
                     var config = new MapperConfiguration(cfg =>
                     {
-                        cfg.CreateMap<Project, IProjectModel>().ReverseMap();
-                        //cfg.CreateMap<ProjectTask, IProjectTaskModel>().ReverseMap();
-                        //cfg.CreateMap<TimeEntry, ITimeEntryModel>().ReverseMap();
+                        cfg.CreateMap<Project, ProjectModel>().ReverseMap();
+                        cfg.CreateMap<ProjectTask, ProjectTaskModel>().ReverseMap();
+                        cfg.CreateMap<TimeEntry, TimeEntryModel>().ReverseMap();
                         cfg.ConstructServicesUsing(t => kernel.Get(t));
                     });
                     return config.CreateMapper();

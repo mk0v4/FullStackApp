@@ -13,7 +13,7 @@ namespace Tasker.Service.Models
         [Required]
         [MaxLength(200)]
         public string Name { get; set; }
-        public DateTime TimeSpent { get; set; }
+        public TimeSpan TimeSpent { get; set; }
         [MaxLength(1500)]
         public string Description { get; set; }
         public long ProjectTaskId { get; set; }

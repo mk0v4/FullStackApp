@@ -1,0 +1,177 @@
+﻿@model Tasker.MVC.Models.ProjectTaskModel
+@using PagedList.Mvc;
+
+@{
+    if (Model == null)
+    {
+        Response.Redirect("Errors/Error404");
+        return;
+    }
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Project Task</h4>
+    @Html.ActionLink("Back to Tasks", "Details", "Project", new { id = Model.ProjectId }, new { @class = "btn btn-info" })
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DueDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DueDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Priority)
+        </dt>
+
+        <dd>
+            @Html.DropDownListFor(model => model.Priority, new List<SelectListItem>
+                       {
+                           new SelectListItem {Text = "Low", Value = "0"},
+                           new SelectListItem {Text = "Medium", Value = "1"},
+                           new SelectListItem {Text = "High", Value = "2", },
+                       }, new { @class = "form-control", disabled = "disabled" })
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EstimatedTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EstimatedTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Completed)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Completed)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit Task", "Update", new { id = Model.Id }, new { @class = "btn btn-success" })
+
+</p>
+<hr />
+
+<h2>Time Entries</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", "TimeEntry", new { taskId = Model.Id }, new { @class = "btn btn-success" })
+</p>
+
+<div class="row">
+    @using (Html.BeginForm())
+    {
+        @Html.DropDownList("searchProperty", new List<SelectListItem>
+    {
+        new SelectListItem {Text = "Select Property", Value = "" },
+        new SelectListItem {Text = "Name", Value = "Name" },
+        new SelectListItem {Text = "Time Spent >=", Value = "TimeSpent" },
+        new SelectListItem {Text = "Description", Value = "Description" },
+    }, new { @id = "ddl", @onchange = "onChangeFunc(this.value)" })
+
+        @Html.TextBox("SearchString", null, new { @id = "txt", @style = "display: none" })
+        @Html.TextBox("SearchTime", null, new { @id = "tim", @style = "display: none", @placeholder = "HH:mm" })
+
+        <input type="submit" value="Search" class="btn btn-lg" style="margin: auto" />
+    }
+</div>
+
+<table class="table">
+    <tr>
+        <th>
+            @if (ViewBag.sortByTimeEntry != "Name")
+            {
+                @Html.ActionLink("Name", "Details", new { sortBy = "Name", sortDirection = "asc" })
+            }
+            else if (ViewBag.sortDirectionTimeEntry == "asc" && ViewBag.sortByTimeEntry == "Name")
+            {
+                @Html.ActionLink("Name " + (string)ViewBag.sortDirectionTimeEntry, "Details", new { sortBy = "Name", sortDirection = "desc" })
+            }
+            else if (ViewBag.sortDirectionTimeEntry == "desc" && ViewBag.sortByTimeEntry == "Name")
+            {
+                @Html.ActionLink("Name " + (string)ViewBag.sortDirectionTimeEntry, "Details", new { sortBy = "Id", sortDirection = "asc" })
+            }
+        </th>
+        <th>
+            @if (ViewBag.sortByTimeEntry != "TimeSpent")
+            {
+                @Html.ActionLink("Time Spent", "Details", new { sortBy = "TimeSpent", sortDirection = "asc" })
+            }
+            else if (ViewBag.sortDirectionTimeEntry == "asc" && ViewBag.sortByTimeEntry == "TimeSpent")
+            {
+                @Html.ActionLink("Time Spent " + (string)ViewBag.sortDirectionTimeEntry, "Details", new { sortBy = "TimeSpent", sortDirection = "desc" })
+            }
+            else if (ViewBag.sortDirectionTimeEntry == "desc" && ViewBag.sortByTimeEntry == "TimeSpent")
+            {
+                @Html.ActionLink("Time Spent " + (string)ViewBag.sortDirectionTimeEntry, "Details", new { sortBy = "Id", sortDirection = "asc" })
+            }
+        </th>
+        <th>
+            @if (ViewBag.sortByTimeEntry != "Description")
+            {
+                @Html.ActionLink("Description", "Details", new { sortBy = "Description", sortDirection = "asc" })
+            }
+            else if (ViewBag.sortDirectionTimeEntry == "asc" && ViewBag.sortByTimeEntry == "Description")
+            {
+                @Html.ActionLink("Description " + (string)ViewBag.sortDirectionTimeEntry, "Details", new { sortBy = "Description", sortDirection = "desc" })
+            }
+            else if (ViewBag.sortDirectionTimeEntry == "desc" && ViewBag.sortByTimeEntry == "Description")
+            {
+                @Html.ActionLink("Description " + (string)ViewBag.sortDirectionTimeEntry, "Details", new { sortBy = "Id", sortDirection = "asc" })
+            }
+        </th>
+        <th style="width: 15%"></th>
+    </tr>
+    @foreach (var item in Model.TimeEntriesPaged)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TimeSpent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.ActionLink("Time Entry Detail", "Details", "TimeEntry", new { id = item.Id }, new { @class = "btn btn-primary btn-block" })
+                @Html.ActionLink("Delete Time Entry", "Delete", "TimeEntry", new { id = item.Id }, new { @class = "btn btn-danger btn-block" })
+            </td>
+        </tr>
+
+    }
+</table>
+@Html.PagedListPager(Model.TimeEntriesPaged, pageNumber => Url.Action("Details", new
+{
+    pageNumber,
+    searchString = ViewBag.searchStringTimeEntries,
+    searchTime = ViewBag.searchTimeTimeEntries,
+    searchProperty = ViewBag.searchPropertyTimeEntries
+}), new PagedListRenderOptions() { DisplayPageCountAndCurrentLocation = true })

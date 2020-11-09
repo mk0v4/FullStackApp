@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
+using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using PagedList;
 using Tasker.Service.Common;
 using Tasker.Service.DataAccess;
 using Tasker.Service.DataAccess.Interface;
@@ -16,6 +19,7 @@ namespace Tasker.Service.DataAccess
         private readonly IApplicationDbContext _dbContext;
         public GenericDataService(IApplicationDbContext context)
         {
+
             this._dbContext = context;
         }
 
@@ -25,14 +29,14 @@ namespace Tasker.Service.DataAccess
             return await _dbContext.SaveChangesAsync();
         }
         
-        public async Task<int> Delete(int id)
+        public async Task<int> Delete(long id)
         {
             T entity = await _dbContext.Set<T>().FindAsync(id);
             _dbContext.Set<T>().Remove(entity);
             return await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<T> Get(int id)
+        public async Task<T> Get(long id)
         {
             T entity = await _dbContext.Set<T>().FindAsync(id);
             return entity;
@@ -45,15 +49,69 @@ namespace Tasker.Service.DataAccess
             return entity;
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public IPagedList<T> Filter(IQueryable<T> source, string property, object value, 
+            int? pageNumber, int pageSize, string sortBy, string sortDirection)
         {
-            IEnumerable<T> enteties = await _dbContext.Set<T>().ToListAsync();
-            return enteties;
+            if (String.IsNullOrEmpty(property))
+            {
+                return Sort(source, sortBy, sortDirection).ToPagedList(pageNumber ?? 1, pageSize);
+            }
+            if (typeof(T).GetProperty(property).PropertyType == typeof(string))
+            {
+                source = source.Where(t => 
+                t.GetType().GetProperty(property).GetValue(t, null) != null ?
+                t.GetType().GetProperty(property).GetValue(t, null).ToString().Contains(value.ToString()) : "".Contains(value.ToString()));
+            } else if (typeof(T).GetProperty(property).PropertyType.IsEnum)
+            {
+                Type enumType = typeof(T).GetProperty(property).PropertyType;
+                source = source.Where(t => t.GetType().GetProperty(property).GetValue(t, null).ToString().Equals(Enum.GetName(enumType, value)));
+            } else if (typeof(T).GetProperty(property).PropertyType == typeof(Nullable<DateTime>))
+            {
+                if (value != null)
+                    source = source.Where(t => DateTime.Compare(Convert.ToDateTime(t.GetType().GetProperty(property).GetValue(t, null)), Convert.ToDateTime(value)) >= 0);
+                else
+                {
+                    source = source.Where(t => t.GetType().GetProperty(property).GetValue(t, null) == null);
+                }
+            } else if (typeof(T).GetProperty(property).PropertyType == typeof(bool)) {
+                source = source.Where(t => t.GetType().GetProperty(property).GetValue(t, null).Equals(value));
+            } else if (typeof(T).GetProperty(property).PropertyType == typeof(Nullable<TimeSpan>))
+            {
+                if (value != null)
+                    source = source.Where(t => t.GetType().GetProperty(property).GetValue(t, null) != null &&
+                    TimeSpan.Compare((TimeSpan) t.GetType().GetProperty(property).GetValue(t, null), (TimeSpan) value) >= 0);
+                else
+                {
+                    source = source.Where(t => t.GetType().GetProperty(property).GetValue(t, null) == null);
+                }
+            }
+            return Sort(source, sortBy, sortDirection).ToPagedList(pageNumber ?? 1, pageSize);
         }
 
-        public Task SaveChangesAsync()
+        private IQueryable<T> Sort(IQueryable<T> source, string sortBy, string sortDirection)
         {
-            return _dbContext.SaveChangesAsync();
+            
+            if (String.IsNullOrEmpty(sortBy) || String.IsNullOrEmpty(sortDirection))
+            {
+                sortBy = "Id";
+                sortDirection = "asc";
+            }
+            var param = Expression.Parameter(typeof(T), "item");
+
+            var sortExpression = Expression.Lambda<Func<T, object>>
+                (Expression.Convert(Expression.Property(param, sortBy), typeof(object)), param);
+            switch (sortDirection.ToLower())
+            {
+                case "asc":
+                    return source.OrderBy<T, object>(sortExpression);
+                default:
+                    return source.OrderByDescending<T, object>(sortExpression);
+            }
+        }
+        public async Task<IQueryable<T>> GetAll()
+        {
+            IEnumerable<T> enteties =  await _dbContext.Set<T>().ToListAsync();
+            return enteties.AsQueryable();
         }
     }
 }

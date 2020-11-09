@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PagedList;
 
 namespace Tasker.MVC.Models.Interface
 {
@@ -12,10 +13,10 @@ namespace Tasker.MVC.Models.Interface
         long Id { get; set; }
         bool Completed { get; set; }
         string Description { get; set; }
-        [Display(Name = "Due Date")]
         DateTime? DueDate { get; set; }
         string Name { get; set; }
         int Priority { get; set; }
-        ICollection<IProjectTaskModel> Tasks { get; set; }
+        //ICollection<ProjectTaskModel> Tasks { get; set; }
+        IPagedList<ProjectTaskModel> TasksPaged { get; set; }
     }
 }

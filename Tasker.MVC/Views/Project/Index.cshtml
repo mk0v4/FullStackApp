@@ -1,63 +1,163 @@
-﻿@model IEnumerable<Tasker.MVC.Models.Interface.IProjectModel>
+﻿@model IEnumerable<Tasker.MVC.Models.ProjectModel>
+@*@model PagedList.IPagedList<Tasker.MVC.Models.ProjectModel>*@
+@using PagedList.Mvc;
 
 @{
     ViewBag.Title = "Index";
 }
 
 <h2>Projects</h2>
-
 <p>
-    @Html.ActionLink("Create New", "Create", "Project")
+    @Html.ActionLink("Create New", "Create", "Project", new { @class = "btn btn-success" })
 </p>
+@using (Html.BeginForm())
+{
+<div class="row">
+    @Html.DropDownList("searchProperty", new List<SelectListItem>
+{
+    new SelectListItem { Text = "Select Property", Value = "" },
+    new SelectListItem {Text = "Name", Value = "Name" },
+    new SelectListItem {Text = "Due Date >=", Value = "DueDate" },
+    new SelectListItem {Text = "Priority", Value = "Priority" },
+    new SelectListItem {Text = "Completed", Value = "Completed" },
+    new SelectListItem {Text = "Description", Value = "Description" },
+}, new { @id = "ddl", @onchange = "onChangeFunc(this.value)" })
+
+    @Html.TextBox("SearchString", null, new { @id = "txt", @style = "display: none" })
+    @Html.TextBox("SearchDate", null, new { @id = "dat", @style = "display: none", @type = "date" })
+    @Html.CheckBox("SearchBool", new { @id = "bol", @style = "display: none" })
+    @*@Html.TextBox("SearchBool", null, new { @id = "bol", @style = "display: none", @type = "checkbox" })*@
+    @*@Html.TextBox("SearchInt", null, new { @id = "num", @style = "display: none", @type = "number" })*@
+    @Html.DropDownList("SearchInt", new List<SelectListItem>
+                   {
+                       new SelectListItem {Text = "Select Priority", Value = "" },
+                       new SelectListItem {Text = "Low", Value = "0" },
+                       new SelectListItem {Text = "Medium", Value = "1"},
+                       new SelectListItem {Text = "High", Value = "2", },
+                   }, new { @id = "num", @style = "display: none", @type = "number" })
+
+    <input type="submit" value="Search" class="btn btn-lg" style="margin: auto" />
+</div>
+
+}
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
+        <th style="width: 20%">
+            @if (ViewBag.sortBy != "Name")
+            {
+                @Html.ActionLink("Name", "Index", new { sortBy = "Name", sortDirection = "asc" })
+            }
+            else if (ViewBag.sortDirection == "asc" && ViewBag.sortBy == "Name")
+            {
+                @Html.ActionLink("Name " + (string)ViewBag.sortDirection, "Index", new { sortBy = "Name", sortDirection = "desc" })
+            }
+            else if (ViewBag.sortDirection == "desc" && ViewBag.sortBy == "Name")
+            {
+                @Html.ActionLink("Name " + (string)ViewBag.sortDirection, "Index", new { sortBy = "Id", sortDirection = "asc" })
+            }
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DueDate)
+        <th style="width: 20%">
+            @if (ViewBag.sortBy != "DueDate")
+            {
+                @Html.ActionLink("Due Date", "Index", new { sortBy = "DueDate", sortDirection = "asc" })
+            }
+            else if (ViewBag.sortDirection == "asc" && ViewBag.sortBy == "DueDate")
+            {
+                @Html.ActionLink("Due Date " + (string)ViewBag.sortDirection, "Index", new { sortBy = "DueDate", sortDirection = "desc" })
+            }
+            else if (ViewBag.sortDirection == "desc" && ViewBag.sortBy == "DueDate")
+            {
+                @Html.ActionLink("Due Date " + (string)ViewBag.sortDirection, "Index", new { sortBy = "Id", sortDirection = "asc" })
+            }
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Priority)
+        <th style="width: 20%">
+            @if (ViewBag.sortBy != "Priority")
+            {
+                @Html.ActionLink("Priority", "Index", new { sortBy = "Priority", sortDirection = "asc" })
+            }
+            else if (ViewBag.sortDirection == "asc" && ViewBag.sortBy == "Priority")
+            {
+                @Html.ActionLink("Priority " + (string)ViewBag.sortDirection, "Index", new { sortBy = "Priority", sortDirection = "desc" })
+            }
+            else if (ViewBag.sortDirection == "desc" && ViewBag.sortBy == "Priority")
+            {
+                @Html.ActionLink("Priority " + (string)ViewBag.sortDirection, "Index", new { sortBy = "Id", sortDirection = "asc" })
+            }
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Completed)
+        <th style="width: 20%">
+            @if (ViewBag.sortBy != "Completed")
+            {
+                @Html.ActionLink("Completed", "Index", new { sortBy = "Completed", sortDirection = "asc" })
+            }
+            else if (ViewBag.sortDirection == "asc" && ViewBag.sortBy == "Completed")
+            {
+                @Html.ActionLink("Completed " + (string)ViewBag.sortDirection, "Index", new { sortBy = "Completed", sortDirection = "desc" })
+            }
+            else if (ViewBag.sortDirection == "desc" && ViewBag.sortBy == "Completed")
+            {
+                @Html.ActionLink("Completed " + (string)ViewBag.sortDirection, "Index", new { sortBy = "Id", sortDirection = "asc" })
+            }
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
+        <th style="width: 20%">
+            @if (ViewBag.sortBy != "Description")
+            {
+                @Html.ActionLink("Description", "Index", new { sortBy = "Description", sortDirection = "asc" })
+            }
+            else if (ViewBag.sortDirection == "asc" && ViewBag.sortBy == "Description")
+            {
+                @Html.ActionLink("Description " + (string)ViewBag.sortDirection, "Index", new { sortBy = "Description", sortDirection = "desc" })
+            }
+            else if (ViewBag.sortDirection == "desc" && ViewBag.sortBy == "Description")
+            {
+                @Html.ActionLink("Description " + (string)ViewBag.sortDirection, "Index", new { sortBy = "Id", sortDirection = "asc" })
+            }
         </th>
         <th></th>
+
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DueDate)
-        </td>
-        <td>
-            @*@Html.DisplayFor(modelItem => item.Priority)*@
-            @Html.DropDownListFor(modelItem => item.Priority, new List<SelectListItem>
-                       {
-                           new SelectListItem {Text = "Low", Value = "1", Selected = item.Priority == 1 ? true : false },
-                           new SelectListItem {Text = "Medium", Value = "2", Selected = item.Priority == 2 ? true : false },
-                           new SelectListItem {Text = "High", Value = "3", Selected = item.Priority == 3 ? true : false },
-                       }, new { @class = "form-control", disabled = "disabled" })
-        </td>
-        <td>
-            @Html.CheckBoxFor(modelItem => item.Completed, new {disabled = "disabled" })
-        </td>
-        <td>
-            @Html.TextAreaFor(modelItem => item.Description, new { disabled = "disabled" })
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DueDate)
+            </td>
+            <td>
+                @Html.DropDownListFor(modelItem => item.Priority, new List<SelectListItem>
+                           {
+                               new SelectListItem {Text = "Low", Value = "0", Selected = item.Priority == 0 ? true : false },
+                               new SelectListItem {Text = "Medium", Value = "1", Selected = item.Priority == 1 ? true : false },
+                               new SelectListItem {Text = "High", Value = "2", Selected = item.Priority == 2 ? true : false },
+                           }, new { @class = "form-control", disabled = "disabled" })
+            </td>
+            <td>
+                @Html.CheckBoxFor(modelItem => item.Completed, new { disabled = "disabled" })
+            </td>
+            <td>
+                @Html.TextAreaFor(modelItem => item.Description, new { disabled = "disabled" })
+            </td>
+            <td>
+                @*edit in details*@
+                @*@Html.ActionLink("Edit", "Update", new { id = item.Id }) |*@
+                @Html.ActionLink("Project Detail", "Details", new { id = item.Id }, new { @class = "btn btn-primary btn-block" })
+                @Html.ActionLink("Delete Project", "Delete", new { id = item.Id }, new { @class = "btn btn-danger btn-block" })
+            </td>
+        </tr>
+    }
 
 </table>
+
+@Html.PagedListPager((PagedList.IPagedList) Model, pageNumber => Url.Action("Index", new
+{
+    pageNumber,
+    searchString = ViewBag.searchString,
+    searchInt = ViewBag.searchInt,
+    searchDate = ViewBag.searchDate,
+    searchBool = ViewBag.searchBool,
+    searchProperty = ViewBag.searchProperty,
+    sortBy = ViewBag.sortBy,
+    sortDirection = ViewBag.sortDirection
+}), new PagedListRenderOptions() { DisplayPageCountAndCurrentLocation = true })

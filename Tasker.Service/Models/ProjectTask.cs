@@ -17,7 +17,7 @@ namespace Tasker.Service.Models
         public DateTime? DueDate { get; set; }
         //[Required]
         public PriorityLevel Priority { get; set; }
-        public DateTime? EstimatedTime { get; set; }
+        public TimeSpan? EstimatedTime { get; set; }
         public bool Completed { get; set; }
         //[Required]
         [MaxLength(1500)]
@@ -25,5 +25,6 @@ namespace Tasker.Service.Models
         public long ProjectId { get; set; }
         public Project Project { get; set; }
         public virtual ICollection<TimeEntry> TimeEntries { get; set; }
+
     }
 }

@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PagedList;
 using Tasker.Service.Common;
 using Tasker.Service.DataAccess;
 using Tasker.Service.DataAccess.Interface;
@@ -23,7 +26,7 @@ namespace Tasker.Service.Service
             return await base.Create<Project>(project);
         }
 
-        public new async Task<int> Delete(int id)
+        public new async Task<int> Delete(long id)
         {
             return await base.Delete(id);
         }
@@ -33,15 +36,16 @@ namespace Tasker.Service.Service
             return await base.Update<Project>(project);
         }
 
-        public new async Task<Project> Get(int id)
+        public new async Task<Project> Get(long id)
         {
             return await base.Get(id);
 
         }
 
-        public new async Task<IEnumerable<Project>> GetAll()
+        public async Task<IPagedList<Project>> Filter(string property, object value, int? pageNumber, int pageSize, string sortBy, string sortDirection)
         {
-            return await base.GetAll();
+            IQueryable<Project> source = await base.GetAll();
+            return base.Filter(source, property, value, pageNumber, pageSize, sortBy, sortDirection);
         }
     }
 }
