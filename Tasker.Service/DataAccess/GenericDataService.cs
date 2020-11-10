@@ -60,7 +60,7 @@ namespace Tasker.Service.DataAccess
             {
                 source = source.Where(t => 
                 t.GetType().GetProperty(property).GetValue(t, null) != null ?
-                t.GetType().GetProperty(property).GetValue(t, null).ToString().Contains(value.ToString()) : "".Contains(value.ToString()));
+                t.GetType().GetProperty(property).GetValue(t, null).ToString().ToLower().Contains(value.ToString().ToLower()) : "".Contains(value.ToString()));
             } else if (typeof(T).GetProperty(property).PropertyType.IsEnum)
             {
                 Type enumType = typeof(T).GetProperty(property).PropertyType;

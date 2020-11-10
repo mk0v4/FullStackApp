@@ -17,8 +17,8 @@ namespace Tasker.Service.DataAccess
         {
             return base.Set<T>();
         }
-        //public ApplicationDbContext() : base("TaskerDB") { }
-        public ApplicationDbContext() : base() { }
+        public ApplicationDbContext() : base("TaskerDB") { }
+        //public ApplicationDbContext() : base() { }
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectTask> Tasks { get; set; }
         public DbSet<TimeEntry> TimeEntries { get; set; }

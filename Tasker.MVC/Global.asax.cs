@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -7,6 +8,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using AutoMapper;
 using Tasker.MVC.Models.Interface;
+using Tasker.Service.DataAccess;
 using Tasker.Service.Models;
 
 namespace Tasker.MVC
@@ -15,6 +17,7 @@ namespace Tasker.MVC
     {
         protected void Application_Start()
         {
+            Database.SetInitializer(new TaskerDbInit());
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
