@@ -15,6 +15,9 @@ namespace Tasker.Service.DataAccess.Interface
         Task<int> Delete(long id);
         Task<T> Get(long id);
         Task<T> Update<E>(T entity) where E : Entity;
+        [Obsolete("Method is deprecated.", true)]
         IPagedList<T> Filter(IQueryable<T> source, string property, object value, int? pageNumber, int pageSize, string sortBy, string sortDirection);
+
+        IPagedList<T> Filter(IQueryable<T> source, FilteringElements filteringElements);
     }
 }

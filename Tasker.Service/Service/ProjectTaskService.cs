@@ -39,6 +39,7 @@ namespace Tasker.Service.Service
             return await base.Get(id);
 
         }
+        [Obsolete("Method is deprecated.", true)]
         public async Task<IPagedList<ProjectTask>> Filter(long? id, string property, object value, int? pageNumber, int pageSize, string sortBy, string sortDirection)
         {
             IQueryable<ProjectTask> source = Enumerable.Empty<ProjectTask>().AsQueryable();
@@ -48,6 +49,16 @@ namespace Tasker.Service.Service
                 source = source.Where(p => p.ProjectId == id);
             }
             return base.Filter(source, property, value, pageNumber, pageSize, sortBy, sortDirection);
+        }
+        public async Task<IPagedList<ProjectTask>> Filter(FilteringElements filteringElements)
+        {
+            IQueryable<ProjectTask> source = Enumerable.Empty<ProjectTask>().AsQueryable();
+            if (filteringElements.Id != null)
+            {
+                source = await base.GetAll();
+                source = source.Where(p => p.ProjectId == filteringElements.Id);
+            }
+            return base.Filter(source, filteringElements);
         }
     }
 }

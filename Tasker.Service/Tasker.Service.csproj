@@ -82,7 +82,9 @@
     <Compile Include="DataAccess.Interface\IApplicationDbContext.cs" />
     <Compile Include="DataAccess.Interface\IGenericDataService.cs" />
     <Compile Include="DataAccess\ApplicationDbContext.cs" />
+    <Compile Include="DataAccess\FilteringElements.cs" />
     <Compile Include="DataAccess\GenericDataService.cs" />
+    <Compile Include="DataAccess.Interface\IFilteringElements.cs" />
     <Compile Include="DataAccess\TaskerDbInit.cs" />
     <Compile Include="Enums\PriorityLevel.cs" />
     <Compile Include="Migrations\202011022122474_InitialDBCreation.cs" />

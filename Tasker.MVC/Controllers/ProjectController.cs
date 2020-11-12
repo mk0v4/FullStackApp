@@ -21,6 +21,7 @@ using Microsoft.Ajax.Utilities;
 using PagedList;
 using System.Web.UI.WebControls;
 using System.Web.Http.Results;
+using Tasker.Service.DataAccess;
 
 namespace Tasker.MVC.Controllers
 {
@@ -48,19 +49,18 @@ namespace Tasker.MVC.Controllers
             (searchString, searchInt, searchDate, searchBool, searchProperty, pageNumber, sortBy, sortDirection) =
                 TempView(searchString, searchInt, searchDate, searchBool, searchProperty, pageNumber, sortBy, sortDirection);
 
-
             int pn = pageNumber ?? 1;
             IPagedList<Project> projects = new PagedList<Project>(Enumerable.Empty<Project>(), 1, 1);
             if (String.IsNullOrEmpty(searchString) && searchInt == null && String.IsNullOrEmpty(searchProperty))
-                projects = await _projectService.Filter("", "", pn, RowNumber, sortBy, sortDirection);
+                projects = await _projectService.Filter(new FilteringElements("", null, pn, RowNumber, sortBy, sortDirection));
             else if (!String.IsNullOrEmpty(searchString))
-                projects = await _projectService.Filter(searchProperty, searchString, pn, RowNumber, sortBy, sortDirection);
-            else if (searchInt != null)
-                projects = await _projectService.Filter(searchProperty, searchInt, pn, RowNumber, sortBy, sortDirection);
+                projects = await _projectService.Filter(new FilteringElements(searchProperty, searchString, pn, RowNumber, sortBy, sortDirection));
+            else if (searchInt != null && searchProperty == "Priority")
+                projects = await _projectService.Filter(new FilteringElements(searchProperty, searchInt, pn, RowNumber, sortBy, sortDirection));
             else if (searchProperty == "DueDate")
-                projects = await _projectService.Filter(searchProperty, searchDate, pn, RowNumber, sortBy, sortDirection);
+                projects = await _projectService.Filter(new FilteringElements(searchProperty, searchDate, pn, RowNumber, sortBy, sortDirection));
             else if (searchBool != null && searchProperty == "Completed")
-                projects = await _projectService.Filter(searchProperty, searchBool, pn, RowNumber, sortBy, sortDirection);
+                projects = await _projectService.Filter(new FilteringElements(searchProperty, searchBool, pn, RowNumber, sortBy, sortDirection));
 
             ViewBag.sortBy = sortBy;
             ViewBag.sortDirection = sortDirection;
@@ -97,17 +97,22 @@ namespace Tasker.MVC.Controllers
             int pn = pageNumber ?? 1;
             IPagedList<ProjectTask> projectTasks = new PagedList<ProjectTask>(Enumerable.Empty<ProjectTask>(), 1, 1);
             if (String.IsNullOrEmpty(searchString) && searchInt == null && String.IsNullOrEmpty(searchProperty))
-                projectTasks = await _projectTaskService.Filter(id, "", "", pn, RowNumber, sortBy, sortDirection);
+                projectTasks = await _projectTaskService.Filter(new FilteringElements(id, "", null, pn, RowNumber, sortBy, sortDirection));
             else if (!String.IsNullOrEmpty(searchString))
-                projectTasks = await _projectTaskService.Filter(id, searchProperty, searchString, pn, RowNumber, sortBy, sortDirection);
-            else if (searchInt != null)
-                projectTasks = await _projectTaskService.Filter(id, searchProperty, searchInt, pn, RowNumber, sortBy, sortDirection);
+                projectTasks = await _projectTaskService.Filter(new FilteringElements(id, searchProperty, searchString, 
+                    pn, RowNumber, sortBy, sortDirection));
+            else if (searchInt != null && searchProperty == "Priority")
+                projectTasks = await _projectTaskService.Filter(new FilteringElements(id, searchProperty, searchInt, 
+                    pn, RowNumber, sortBy, sortDirection));
             else if (searchProperty == "DueDate")
-                projectTasks = await _projectTaskService.Filter(id, searchProperty, searchDate, pn, RowNumber, sortBy, sortDirection);
+                projectTasks = await _projectTaskService.Filter(new FilteringElements(id, searchProperty, searchDate, 
+                    pn, RowNumber, sortBy, sortDirection));
             else if (searchBool != null && searchProperty == "Completed")
-                projectTasks = await _projectTaskService.Filter(id, searchProperty, searchBool, pn, RowNumber, sortBy, sortDirection);
+                projectTasks = await _projectTaskService.Filter(new FilteringElements(id, searchProperty, searchBool, 
+                    pn, RowNumber, sortBy, sortDirection));
             else if (searchProperty == "EstimatedTime")
-                projectTasks = await _projectTaskService.Filter(id, searchProperty, searchTime, pn, RowNumber, sortBy, sortDirection);
+                projectTasks = await _projectTaskService.Filter(new FilteringElements(id, searchProperty, searchTime, 
+                    pn, RowNumber, sortBy, sortDirection));
 
             ViewBag.sortByTasks = sortBy;
             ViewBag.sortDirectionTasks = sortDirection;
@@ -247,8 +252,7 @@ namespace Tasker.MVC.Controllers
             TempData.Keep();
             return (searchString, searchInt, searchDate, searchBool, searchProperty, pageNumber, sortBy, sortDirection);
         }
-        private (string searchString, int? searchInt, DateTime? searchDate, bool? searchBool, TimeSpan? searchTime,
-            string searchProperty, int? pageNumber, string, string) TempDetail(long id, string searchString, int? searchInt,
+        private (string, int?, DateTime?, bool?, TimeSpan?, string, int?, string, string ) TempDetail(long id, string searchString, int? searchInt,
             DateTime? searchDate, bool? searchBool, TimeSpan? searchTime, string searchProperty, int? pageNumber, string sortBy, string sortDirection)
         {
             if (TempData["projectId"] == null)

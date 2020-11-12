@@ -93,6 +93,9 @@
 
         @Html.TextBox("SearchString", null, new { @id = "txt", @style = "display: none" })
         @Html.TextBox("SearchDate", null, new { @id = "dat", @style = "display: none", @type = "date" })
+        @*@Html.Label(ViewBag.searchDateTasks != null ? (string) ViewBag.searchDateTasks.ToString("dd-MM-yyyy") : "")*@
+        @*@Html.TextBox("SearchDate", ViewBag.searchDateTasks != null ? (string)ViewBag.searchDateTasks.ToString("dd.MM.yyyy") : "",
+            new { @id = "dat", @style = "display: none", @placeholder = "dd.MM.yyyy"})*@
         @Html.CheckBox("SearchBool", new { @id = "bol", @style = "display: none" })
         @Html.TextBox("SearchTime", null, new { @id = "tim", @style = "display: none", @placeholder = "HH:mm" })
         @*@Html.TextBox("SearchBool", null, new { @id = "bol", @style = "display: none", @type = "checkbox" })*@

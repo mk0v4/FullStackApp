@@ -17,6 +17,7 @@ using Tasker.MVC.Models.Interface;
 using Tasker.Service;
 using Tasker.Service.Service.Interface;
 using PagedList;
+using Tasker.Service.DataAccess;
 
 namespace Tasker.MVC.Controllers
 {
@@ -63,11 +64,13 @@ namespace Tasker.MVC.Controllers
             int pn = pageNumber ?? 1;
             IPagedList<TimeEntry> timeEntries = new PagedList<TimeEntry>(Enumerable.Empty<TimeEntry>(), 1, 1);
             if (String.IsNullOrEmpty(searchString) && String.IsNullOrEmpty(searchProperty))
-                timeEntries = await _timeEntryService.Filter(id, "", "", pn, RowNumber, sortBy, sortDirection);
+                timeEntries = await _timeEntryService.Filter(new FilteringElements(id, "", null, pn, RowNumber, sortBy, sortDirection));
             else if (!String.IsNullOrEmpty(searchString))
-                timeEntries = await _timeEntryService.Filter(id, searchProperty, searchString, pn, RowNumber, sortBy, sortDirection);
+                timeEntries = await _timeEntryService.Filter(new FilteringElements(id, searchProperty, searchString, 
+                    pn, RowNumber, sortBy, sortDirection));
             else if (searchProperty == "TimeSpent")
-                timeEntries = await _timeEntryService.Filter(id, searchProperty, searchTime, pn, RowNumber, sortBy, sortDirection);
+                timeEntries = await _timeEntryService.Filter(new FilteringElements(id, searchProperty, searchTime, 
+                    pn, RowNumber, sortBy, sortDirection));
 
             ViewBag.sortByTimeEntry = sortBy;
             ViewBag.sortDirectionTimeEntry = sortDirection;

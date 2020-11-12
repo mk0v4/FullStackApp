@@ -41,11 +41,17 @@ namespace Tasker.Service.Service
             return await base.Get(id);
 
         }
-
+        [Obsolete("Method is deprecated.", true)]
         public async Task<IPagedList<Project>> Filter(string property, object value, int? pageNumber, int pageSize, string sortBy, string sortDirection)
         {
             IQueryable<Project> source = await base.GetAll();
             return base.Filter(source, property, value, pageNumber, pageSize, sortBy, sortDirection);
+        }
+
+        public async Task<IPagedList<Project>> Filter(FilteringElements filteringElements)
+        {
+            IQueryable<Project> source = await base.GetAll();
+            return base.Filter(source, filteringElements);
         }
     }
 }

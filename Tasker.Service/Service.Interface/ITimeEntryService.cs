@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PagedList;
+using Tasker.Service.DataAccess;
 using Tasker.Service.Models;
 
 namespace Tasker.Service.Service.Interface
@@ -14,6 +15,8 @@ namespace Tasker.Service.Service.Interface
         Task<TimeEntry> Get(long id);
         Task<int> Delete(long id);
         Task<TimeEntry> Update(TimeEntry project);
+        [Obsolete("Method is deprecated.", true)]
         Task<IPagedList<TimeEntry>> Filter(long? id, string property, object value, int? pageNumber, int pageSize, string sortBy, string sortDirection);
+        Task<IPagedList<TimeEntry>> Filter(FilteringElements filteringElements);
     }
 }
