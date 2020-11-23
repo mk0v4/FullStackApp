@@ -35,20 +35,20 @@ namespace Tasker.Service.Service
             return await base.Get(id);
 
         }
-        public async Task<IPagedList<ProjectTask>> Find(FindParams findElements)
+        public async Task<IPagedList<ProjectTask>> Find(FindParams findParams)
         {
             IQueryable<ProjectTask> source = Enumerable.Empty<ProjectTask>().AsQueryable();
-            if (findElements.Id != null)
+            if (findParams.Id != null)
             {
                 source = await base.GetAll();
-                source = source.Where(p => p.ProjectId == findElements.Id);
+                source = source.Where(p => p.ProjectId == findParams.Id);
             }
             Filter<ProjectTask> filter = new Filter<ProjectTask>(new ProjectTaskFilterParams());
             Sort<ProjectTask> sort = new Sort<ProjectTask>();
-            sort.SortData(findElements, filter.FilterData(findElements, source));
+            sort.SortData(findParams, filter.FilterData(findParams, source));
             Paging<ProjectTask> paging = new Paging<ProjectTask>();
 
-            return paging.PaginateData(findElements, sort.SortData(findElements, filter.FilterData(findElements, source)));
+            return paging.PaginateData(findParams, sort.SortData(findParams, filter.FilterData(findParams, source)));
         }
     }
 }
