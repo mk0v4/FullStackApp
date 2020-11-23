@@ -1,6 +1,6 @@
 ﻿namespace Tasker.Service.DataAccess.Interface
 {
-    public interface IFilteringElements
+    public interface IFindParams
     {
         long? Id { get; }
         int NumberOfRows { get; }

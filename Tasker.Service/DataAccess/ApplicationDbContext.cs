@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Tasker.Service.Common;
 using Tasker.Service.DataAccess.Interface;
@@ -18,7 +14,6 @@ namespace Tasker.Service.DataAccess
             return base.Set<T>();
         }
         public ApplicationDbContext() : base("TaskerDB") { }
-        //public ApplicationDbContext() : base() { }
         public DbSet<Project> Projects { get; set; }
         public DbSet<ProjectTask> Tasks { get; set; }
         public DbSet<TimeEntry> TimeEntries { get; set; }

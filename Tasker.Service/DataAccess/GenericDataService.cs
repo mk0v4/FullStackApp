@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
-using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
-using PagedList;
 using Tasker.Service.Common;
-using Tasker.Service.DataAccess;
 using Tasker.Service.DataAccess.Interface;
 
 namespace Tasker.Service.DataAccess
@@ -19,7 +13,6 @@ namespace Tasker.Service.DataAccess
         private readonly IApplicationDbContext _dbContext;
         public GenericDataService(IApplicationDbContext context)
         {
-
             this._dbContext = context;
         }
 
@@ -47,118 +40,6 @@ namespace Tasker.Service.DataAccess
             _dbContext.Set<T>().AddOrUpdate(entity);
             await _dbContext.SaveChangesAsync();
             return entity;
-        }
-        [Obsolete("Method is deprecated.", true)]
-        public IPagedList<T> Filter(IQueryable<T> source, string property, object value, 
-            int? pageNumber, int pageSize, string sortBy, string sortDirection)
-        {
-            if (String.IsNullOrEmpty(property))
-            {
-                return Sort(source, sortBy, sortDirection).ToPagedList(pageNumber ?? 1, pageSize);
-            }
-            if (typeof(T).GetProperty(property).PropertyType == typeof(string))
-            {
-                source = source.Where(t => 
-                t.GetType().GetProperty(property).GetValue(t, null) != null ?
-                t.GetType().GetProperty(property).GetValue(t, null).ToString().ToLower().Contains(value.ToString().ToLower()) : "".Contains(value.ToString()));
-            } else if (typeof(T).GetProperty(property).PropertyType.IsEnum)
-            {
-                Type enumType = typeof(T).GetProperty(property).PropertyType;
-                source = source.Where(t => t.GetType().GetProperty(property).GetValue(t, null).ToString().Equals(Enum.GetName(enumType, value)));
-            } else if (typeof(T).GetProperty(property).PropertyType == typeof(Nullable<DateTime>))
-            {
-                if (value != null)
-                    source = source.Where(t => DateTime.Compare(Convert.ToDateTime(t.GetType().GetProperty(property).GetValue(t, null)), Convert.ToDateTime(value)) >= 0);
-                else
-                {
-                    source = source.Where(t => t.GetType().GetProperty(property).GetValue(t, null) == null);
-                }
-            } else if (typeof(T).GetProperty(property).PropertyType == typeof(bool)) {
-                source = source.Where(t => t.GetType().GetProperty(property).GetValue(t, null).Equals(value));
-            } else if (typeof(T).GetProperty(property).PropertyType == typeof(Nullable<TimeSpan>))
-            {
-                if (value != null)
-                    source = source.Where(t => t.GetType().GetProperty(property).GetValue(t, null) != null &&
-                    TimeSpan.Compare((TimeSpan) t.GetType().GetProperty(property).GetValue(t, null), (TimeSpan) value) >= 0);
-                else
-                {
-                    source = source.Where(t => t.GetType().GetProperty(property).GetValue(t, null) == null);
-                }
-            }
-            return Sort(source, sortBy, sortDirection).ToPagedList(pageNumber ?? 1, pageSize);
-        }
-
-        public IPagedList<T> Filter(IQueryable<T> source, FilteringElements filteringElements)
-        {
-            if (String.IsNullOrEmpty(filteringElements.SearchProperty))
-            {
-                return Sort(source, filteringElements.SortBy, filteringElements.SortDirection)
-                    .ToPagedList(filteringElements.PageNumber ?? 1, filteringElements.NumberOfRows);
-            }
-            if (typeof(T).GetProperty(filteringElements.SearchProperty).PropertyType == typeof(string))
-            {
-                source = source.Where(t =>
-                t.GetType().GetProperty(filteringElements.SearchProperty).GetValue(t, null) != null ?
-                t.GetType().GetProperty(filteringElements.SearchProperty).GetValue(t, null).ToString().ToLower()
-                    .Contains(filteringElements.SearchValue.ToString().ToLower()) :
-                    "".Contains(filteringElements.SearchValue.ToString()));
-            }
-            else if (typeof(T).GetProperty(filteringElements.SearchProperty).PropertyType.IsEnum)
-            {
-                Type enumType = typeof(T).GetProperty(filteringElements.SearchProperty).PropertyType;
-                source = source.Where(t => t.GetType().GetProperty(filteringElements.SearchProperty).GetValue(t, null).ToString()
-                .Equals(Enum.GetName(enumType, filteringElements.SearchValue)));
-            }
-            else if (typeof(T).GetProperty(filteringElements.SearchProperty).PropertyType == typeof(Nullable<DateTime>))
-            {
-                if (filteringElements.SearchValue != null)
-                    source = source.Where(t => DateTime.Compare(Convert.ToDateTime(
-                        t.GetType().GetProperty(filteringElements.SearchProperty).GetValue(t, null)),
-                        Convert.ToDateTime(filteringElements.SearchValue)) >= 0);
-                else
-                {
-                    source = source.Where(t => t.GetType().GetProperty(filteringElements.SearchProperty).GetValue(t, null) == null);
-                }
-            }
-            else if (typeof(T).GetProperty(filteringElements.SearchProperty).PropertyType == typeof(bool))
-            {
-                source = source.Where(t => t.GetType().GetProperty(filteringElements.SearchProperty).GetValue(t, null)
-                .Equals(filteringElements.SearchValue));
-            }
-            else if (typeof(T).GetProperty(filteringElements.SearchProperty).PropertyType == typeof(Nullable<TimeSpan>))
-            {
-                if (filteringElements.SearchValue != null)
-                    source = source.Where(t => t.GetType().GetProperty(filteringElements.SearchProperty).GetValue(t, null) != null &&
-                    TimeSpan.Compare((TimeSpan)t.GetType().GetProperty(filteringElements.SearchProperty).GetValue(t, null),
-                    (TimeSpan) filteringElements.SearchValue) >= 0);
-                else
-                {
-                    source = source.Where(t => t.GetType().GetProperty(filteringElements.SearchProperty).GetValue(t, null) == null);
-                }
-            }
-            return Sort(source, filteringElements.SortBy, filteringElements.SortDirection)
-                .ToPagedList(filteringElements.PageNumber ?? 1, filteringElements.NumberOfRows);
-        }
-
-        private IQueryable<T> Sort(IQueryable<T> source, string sortBy, string sortDirection)
-        {
-            
-            if (String.IsNullOrEmpty(sortBy) || String.IsNullOrEmpty(sortDirection))
-            {
-                sortBy = "Id";
-                sortDirection = "asc";
-            }
-            var param = Expression.Parameter(typeof(T), "item");
-
-            var sortExpression = Expression.Lambda<Func<T, object>>
-                (Expression.Convert(Expression.Property(param, sortBy), typeof(object)), param);
-            switch (sortDirection.ToLower())
-            {
-                case "asc":
-                    return source.OrderBy<T, object>(sortExpression);
-                default:
-                    return source.OrderByDescending<T, object>(sortExpression);
-            }
         }
         public async Task<IQueryable<T>> GetAll()
         {

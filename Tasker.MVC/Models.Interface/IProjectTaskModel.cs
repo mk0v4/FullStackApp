@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PagedList;
-using Tasker.MVC.Models;
 
 namespace Tasker.MVC.Models.Interface
 {
@@ -20,7 +14,6 @@ namespace Tasker.MVC.Models.Interface
         string Description { get; set; }
         long ProjectId { get; set; }
         ProjectModel Project { get; set; }
-        //ICollection<TimeEntryModel> TimeEntries { get; set; }
         IPagedList<TimeEntryModel> TimeEntriesPaged { get; set; }
     }
 }

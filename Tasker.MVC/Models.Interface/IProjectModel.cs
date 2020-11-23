@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PagedList;
 
 namespace Tasker.MVC.Models.Interface
@@ -16,7 +11,6 @@ namespace Tasker.MVC.Models.Interface
         DateTime? DueDate { get; set; }
         string Name { get; set; }
         int Priority { get; set; }
-        //ICollection<ProjectTaskModel> Tasks { get; set; }
         IPagedList<ProjectTaskModel> TasksPaged { get; set; }
     }
 }

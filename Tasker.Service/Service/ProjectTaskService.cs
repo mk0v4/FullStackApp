@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using PagedList;
-using Tasker.Service.Common;
 using Tasker.Service.DataAccess;
 using Tasker.Service.DataAccess.Interface;
+using Tasker.Service.FilterModels;
 using Tasker.Service.Models;
 using Tasker.Service.Service.Interface;
 
@@ -39,26 +35,20 @@ namespace Tasker.Service.Service
             return await base.Get(id);
 
         }
-        [Obsolete("Method is deprecated.", true)]
-        public async Task<IPagedList<ProjectTask>> Filter(long? id, string property, object value, int? pageNumber, int pageSize, string sortBy, string sortDirection)
+        public async Task<IPagedList<ProjectTask>> Find(FindParams findElements)
         {
             IQueryable<ProjectTask> source = Enumerable.Empty<ProjectTask>().AsQueryable();
-            if (id != null)
+            if (findElements.Id != null)
             {
                 source = await base.GetAll();
-                source = source.Where(p => p.ProjectId == id);
+                source = source.Where(p => p.ProjectId == findElements.Id);
             }
-            return base.Filter(source, property, value, pageNumber, pageSize, sortBy, sortDirection);
-        }
-        public async Task<IPagedList<ProjectTask>> Filter(FilteringElements filteringElements)
-        {
-            IQueryable<ProjectTask> source = Enumerable.Empty<ProjectTask>().AsQueryable();
-            if (filteringElements.Id != null)
-            {
-                source = await base.GetAll();
-                source = source.Where(p => p.ProjectId == filteringElements.Id);
-            }
-            return base.Filter(source, filteringElements);
+            Filter<ProjectTask> filter = new Filter<ProjectTask>(new ProjectTaskFilterParams());
+            Sort<ProjectTask> sort = new Sort<ProjectTask>();
+            sort.SortData(findElements, filter.FilterData(findElements, source));
+            Paging<ProjectTask> paging = new Paging<ProjectTask>();
+
+            return paging.PaginateData(findElements, sort.SortData(findElements, filter.FilterData(findElements, source)));
         }
     }
 }

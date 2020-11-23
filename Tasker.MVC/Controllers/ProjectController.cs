@@ -2,25 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using AutoMapper;
-using Ninject.Activation;
-using Tasker.Service.DataAccess.Interface;
 using Tasker.Service.Models;
 using Tasker.MVC.Controllers.Interface;
 using Tasker.MVC.Models;
-using Tasker.MVC.Models.Interface;
-using Tasker.Service;
 using Tasker.Service.Service.Interface;
-using System.Diagnostics;
-using Microsoft.Ajax.Utilities;
 using PagedList;
-using System.Web.UI.WebControls;
-using System.Web.Http.Results;
 using Tasker.Service.DataAccess;
 
 namespace Tasker.MVC.Controllers
@@ -52,15 +41,15 @@ namespace Tasker.MVC.Controllers
             int pn = pageNumber ?? 1;
             IPagedList<Project> projects = new PagedList<Project>(Enumerable.Empty<Project>(), 1, 1);
             if (String.IsNullOrEmpty(searchString) && searchInt == null && String.IsNullOrEmpty(searchProperty))
-                projects = await _projectService.Filter(new FilteringElements("", null, pn, RowNumber, sortBy, sortDirection));
+                projects = await _projectService.Find(new FindParams("", null, pn, RowNumber, sortBy, sortDirection));
             else if (!String.IsNullOrEmpty(searchString))
-                projects = await _projectService.Filter(new FilteringElements(searchProperty, searchString, pn, RowNumber, sortBy, sortDirection));
+                projects = await _projectService.Find(new FindParams(searchProperty, searchString, pn, RowNumber, sortBy, sortDirection));
             else if (searchInt != null && searchProperty == "Priority")
-                projects = await _projectService.Filter(new FilteringElements(searchProperty, searchInt, pn, RowNumber, sortBy, sortDirection));
+                projects = await _projectService.Find(new FindParams(searchProperty, searchInt, pn, RowNumber, sortBy, sortDirection));
             else if (searchProperty == "DueDate")
-                projects = await _projectService.Filter(new FilteringElements(searchProperty, searchDate, pn, RowNumber, sortBy, sortDirection));
+                projects = await _projectService.Find(new FindParams(searchProperty, searchDate, pn, RowNumber, sortBy, sortDirection));
             else if (searchBool != null && searchProperty == "Completed")
-                projects = await _projectService.Filter(new FilteringElements(searchProperty, searchBool, pn, RowNumber, sortBy, sortDirection));
+                projects = await _projectService.Find(new FindParams(searchProperty, searchBool, pn, RowNumber, sortBy, sortDirection));
 
             ViewBag.sortBy = sortBy;
             ViewBag.sortDirection = sortDirection;
@@ -97,21 +86,21 @@ namespace Tasker.MVC.Controllers
             int pn = pageNumber ?? 1;
             IPagedList<ProjectTask> projectTasks = new PagedList<ProjectTask>(Enumerable.Empty<ProjectTask>(), 1, 1);
             if (String.IsNullOrEmpty(searchString) && searchInt == null && String.IsNullOrEmpty(searchProperty))
-                projectTasks = await _projectTaskService.Filter(new FilteringElements(id, "", null, pn, RowNumber, sortBy, sortDirection));
+                projectTasks = await _projectTaskService.Find(new FindParams(id, "", null, pn, RowNumber, sortBy, sortDirection));
             else if (!String.IsNullOrEmpty(searchString))
-                projectTasks = await _projectTaskService.Filter(new FilteringElements(id, searchProperty, searchString, 
+                projectTasks = await _projectTaskService.Find(new FindParams(id, searchProperty, searchString, 
                     pn, RowNumber, sortBy, sortDirection));
             else if (searchInt != null && searchProperty == "Priority")
-                projectTasks = await _projectTaskService.Filter(new FilteringElements(id, searchProperty, searchInt, 
+                projectTasks = await _projectTaskService.Find(new FindParams(id, searchProperty, searchInt, 
                     pn, RowNumber, sortBy, sortDirection));
             else if (searchProperty == "DueDate")
-                projectTasks = await _projectTaskService.Filter(new FilteringElements(id, searchProperty, searchDate, 
+                projectTasks = await _projectTaskService.Find(new FindParams(id, searchProperty, searchDate, 
                     pn, RowNumber, sortBy, sortDirection));
             else if (searchBool != null && searchProperty == "Completed")
-                projectTasks = await _projectTaskService.Filter(new FilteringElements(id, searchProperty, searchBool, 
+                projectTasks = await _projectTaskService.Find(new FindParams(id, searchProperty, searchBool, 
                     pn, RowNumber, sortBy, sortDirection));
             else if (searchProperty == "EstimatedTime")
-                projectTasks = await _projectTaskService.Filter(new FilteringElements(id, searchProperty, searchTime, 
+                projectTasks = await _projectTaskService.Find(new FindParams(id, searchProperty, searchTime, 
                     pn, RowNumber, sortBy, sortDirection));
 
             ViewBag.sortByTasks = sortBy;

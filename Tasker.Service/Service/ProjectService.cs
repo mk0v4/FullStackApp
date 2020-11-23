@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using PagedList;
-using Tasker.Service.Common;
 using Tasker.Service.DataAccess;
 using Tasker.Service.DataAccess.Interface;
+using Tasker.Service.FilterModels;
 using Tasker.Service.Models;
 using Tasker.Service.Service.Interface;
 
@@ -39,19 +33,16 @@ namespace Tasker.Service.Service
         public new async Task<Project> Get(long id)
         {
             return await base.Get(id);
-
-        }
-        [Obsolete("Method is deprecated.", true)]
-        public async Task<IPagedList<Project>> Filter(string property, object value, int? pageNumber, int pageSize, string sortBy, string sortDirection)
-        {
-            IQueryable<Project> source = await base.GetAll();
-            return base.Filter(source, property, value, pageNumber, pageSize, sortBy, sortDirection);
         }
 
-        public async Task<IPagedList<Project>> Filter(FilteringElements filteringElements)
+        public async Task<IPagedList<Project>> Find(FindParams findElements)
         {
             IQueryable<Project> source = await base.GetAll();
-            return base.Filter(source, filteringElements);
+            Filter<Project> filter = new Filter<Project>(new ProjectFilterParams());
+            Sort<Project> sort = new Sort<Project>();
+            sort.SortData(findElements, filter.FilterData(findElements, source));
+            Paging<Project> paging = new Paging<Project>();
+            return paging.PaginateData(findElements, sort.SortData(findElements, filter.FilterData(findElements, source)));
         }
     }
 }

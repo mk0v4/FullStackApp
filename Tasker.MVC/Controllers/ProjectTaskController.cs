@@ -2,19 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using AutoMapper;
-using Ninject.Activation;
-using Tasker.Service.DataAccess.Interface;
 using Tasker.Service.Models;
 using Tasker.MVC.Controllers.Interface;
 using Tasker.MVC.Models;
-using Tasker.MVC.Models.Interface;
-using Tasker.Service;
 using Tasker.Service.Service.Interface;
 using PagedList;
 using Tasker.Service.DataAccess;
@@ -64,12 +57,12 @@ namespace Tasker.MVC.Controllers
             int pn = pageNumber ?? 1;
             IPagedList<TimeEntry> timeEntries = new PagedList<TimeEntry>(Enumerable.Empty<TimeEntry>(), 1, 1);
             if (String.IsNullOrEmpty(searchString) && String.IsNullOrEmpty(searchProperty))
-                timeEntries = await _timeEntryService.Filter(new FilteringElements(id, "", null, pn, RowNumber, sortBy, sortDirection));
+                timeEntries = await _timeEntryService.Find(new FindParams(id, "", null, pn, RowNumber, sortBy, sortDirection));
             else if (!String.IsNullOrEmpty(searchString))
-                timeEntries = await _timeEntryService.Filter(new FilteringElements(id, searchProperty, searchString, 
+                timeEntries = await _timeEntryService.Find(new FindParams(id, searchProperty, searchString, 
                     pn, RowNumber, sortBy, sortDirection));
             else if (searchProperty == "TimeSpent")
-                timeEntries = await _timeEntryService.Filter(new FilteringElements(id, searchProperty, searchTime, 
+                timeEntries = await _timeEntryService.Find(new FindParams(id, searchProperty, searchTime, 
                     pn, RowNumber, sortBy, sortDirection));
 
             ViewBag.sortByTimeEntry = sortBy;

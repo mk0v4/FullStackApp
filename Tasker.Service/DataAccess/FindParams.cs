@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Tasker.Service.DataAccess.Interface;
+﻿using Tasker.Service.DataAccess.Interface;
 
 namespace Tasker.Service.DataAccess
 {
-    public class FilteringElements : IFilteringElements
+    public class FindParams : IFindParams
     {
-        public FilteringElements(string searchProperty, object searchValue,
+
+        public FindParams(string searchProperty, object searchValue,
             int? pageNumber, int numberOfRows, string sortBy, string sortDirection)
         {
             SearchProperty = searchProperty;
@@ -18,7 +15,7 @@ namespace Tasker.Service.DataAccess
             SortBy = sortBy;
             SortDirection = sortDirection;
         }
-        public FilteringElements(long? id, string searchProperty, object searchValue, 
+        public FindParams(long? id, string searchProperty, object searchValue, 
             int? pageNumber, int numberOfRows, string sortBy, string sortDirection) {
             Id = id;
             SearchProperty = searchProperty;

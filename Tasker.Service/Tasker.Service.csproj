@@ -82,11 +82,23 @@
     <Compile Include="DataAccess.Interface\IApplicationDbContext.cs" />
     <Compile Include="DataAccess.Interface\IGenericDataService.cs" />
     <Compile Include="DataAccess\ApplicationDbContext.cs" />
-    <Compile Include="DataAccess\FilteringElements.cs" />
+    <Compile Include="DataAccess\Filter.cs" />
+    <Compile Include="DataAccess\FindParams.cs" />
     <Compile Include="DataAccess\GenericDataService.cs" />
-    <Compile Include="DataAccess.Interface\IFilteringElements.cs" />
+    <Compile Include="DataAccess.Interface\IFindParams.cs" />
+    <Compile Include="DataAccess.Interface\IFilter.cs" />
+    <Compile Include="DataAccess.Interface\IPaging.cs" />
+    <Compile Include="DataAccess.Interface\ISort.cs" />
+    <Compile Include="DataAccess\Paging.cs" />
+    <Compile Include="DataAccess\Sort.cs" />
     <Compile Include="DataAccess\TaskerDbInit.cs" />
     <Compile Include="Enums\PriorityLevel.cs" />
+    <Compile Include="FilterModels.Interface\IProjectFilterParams.cs" />
+    <Compile Include="FilterModels.Interface\IProjectTaskFilterParams.cs" />
+    <Compile Include="FilterModels.Interface\ITimeEntryFilterParams.cs" />
+    <Compile Include="FilterModels\ProjectFilterParams.cs" />
+    <Compile Include="FilterModels\ProjectTaskFilterParams.cs" />
+    <Compile Include="FilterModels\TimeEntryFilterParams.cs" />
     <Compile Include="Migrations\202011022122474_InitialDBCreation.cs" />
     <Compile Include="Migrations\202011022122474_InitialDBCreation.designer.cs">
       <DependentUpon>202011022122474_InitialDBCreation.cs</DependentUpon>
