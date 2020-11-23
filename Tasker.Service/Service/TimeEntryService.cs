@@ -31,21 +31,21 @@ namespace Tasker.Service.Service
             return await base.Get(id);
 
         }
-        public async Task<IPagedList<TimeEntry>> Find(FindParams findElements)
+        public async Task<IPagedList<TimeEntry>> Find(FindParams findParams)
         {
             IQueryable<TimeEntry> source = Enumerable.Empty<TimeEntry>().AsQueryable();
-            if (findElements.Id != null)
+            if (findParams.Id != null)
             {
                 source = await base.GetAll();
-                source = source.Where(te => te.ProjectTaskId == findElements.Id);
+                source = source.Where(te => te.ProjectTaskId == findParams.Id);
             }
 
             Filter<TimeEntry> filter = new Filter<TimeEntry>(new TimeEntryFilterParams());
             Sort<TimeEntry> sort = new Sort<TimeEntry>();
-            sort.SortData(findElements, filter.FilterData(findElements, source));
+            sort.SortData(findParams, filter.FilterData(findParams, source));
             Paging<TimeEntry> paging = new Paging<TimeEntry>();
 
-            return paging.PaginateData(findElements, sort.SortData(findElements, filter.FilterData(findElements, source)));
+            return paging.PaginateData(findParams, sort.SortData(findParams, filter.FilterData(findParams, source)));
         }
     }
 }

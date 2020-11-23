@@ -35,14 +35,14 @@ namespace Tasker.Service.Service
             return await base.Get(id);
         }
 
-        public async Task<IPagedList<Project>> Find(FindParams findElements)
+        public async Task<IPagedList<Project>> Find(FindParams findParams)
         {
             IQueryable<Project> source = await base.GetAll();
             Filter<Project> filter = new Filter<Project>(new ProjectFilterParams());
             Sort<Project> sort = new Sort<Project>();
-            sort.SortData(findElements, filter.FilterData(findElements, source));
+            sort.SortData(findParams, filter.FilterData(findParams, source));
             Paging<Project> paging = new Paging<Project>();
-            return paging.PaginateData(findElements, sort.SortData(findElements, filter.FilterData(findElements, source)));
+            return paging.PaginateData(findParams, sort.SortData(findParams, filter.FilterData(findParams, source)));
         }
     }
 }
