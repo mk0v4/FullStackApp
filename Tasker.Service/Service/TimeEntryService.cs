@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using PagedList;
 using Tasker.Service.DataAccess;
 using Tasker.Service.DataAccess.Interface;
-using Tasker.Service.FilterModels;
+using Tasker.Service.FilterModels.Interface;
 using Tasker.Service.Models;
 using Tasker.Service.Service.Interface;
 
@@ -31,7 +31,7 @@ namespace Tasker.Service.Service
             return await base.Get(id);
 
         }
-        public async Task<IPagedList<TimeEntry>> Find(FindParams findParams)
+        public async Task<IPagedList<TimeEntry>> Find(ITimeEntryFilterParams timeEntryFilterParams, IFindParams findParams)
         {
             IQueryable<TimeEntry> source = Enumerable.Empty<TimeEntry>().AsQueryable();
             if (findParams.Id != null)
@@ -39,13 +39,9 @@ namespace Tasker.Service.Service
                 source = await base.GetAll();
                 source = source.Where(te => te.ProjectTaskId == findParams.Id);
             }
-
-            Filter<TimeEntry> filter = new Filter<TimeEntry>(new TimeEntryFilterParams());
-            Sort<TimeEntry> sort = new Sort<TimeEntry>();
-            sort.SortData(findParams, filter.FilterData(findParams, source));
-            Paging<TimeEntry> paging = new Paging<TimeEntry>();
-
-            return paging.PaginateData(findParams, sort.SortData(findParams, filter.FilterData(findParams, source)));
+            source = new Filter<TimeEntry>(timeEntryFilterParams).FilterData(source);
+            source = new Sort<TimeEntry>().SortData(findParams, source);
+            return new Paging<TimeEntry>().PaginateData(findParams, source);
         }
     }
 }

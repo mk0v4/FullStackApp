@@ -4,6 +4,7 @@ using PagedList;
 using Tasker.Service.DataAccess;
 using Tasker.Service.DataAccess.Interface;
 using Tasker.Service.FilterModels;
+using Tasker.Service.FilterModels.Interface;
 using Tasker.Service.Models;
 using Tasker.Service.Service.Interface;
 
@@ -35,7 +36,7 @@ namespace Tasker.Service.Service
             return await base.Get(id);
 
         }
-        public async Task<IPagedList<ProjectTask>> Find(FindParams findParams)
+        public async Task<IPagedList<ProjectTask>> Find(IProjectTaskFilterParams projectTaskFilterParams, IFindParams findParams)
         {
             IQueryable<ProjectTask> source = Enumerable.Empty<ProjectTask>().AsQueryable();
             if (findParams.Id != null)
@@ -43,12 +44,9 @@ namespace Tasker.Service.Service
                 source = await base.GetAll();
                 source = source.Where(p => p.ProjectId == findParams.Id);
             }
-            Filter<ProjectTask> filter = new Filter<ProjectTask>(new ProjectTaskFilterParams());
-            Sort<ProjectTask> sort = new Sort<ProjectTask>();
-            sort.SortData(findParams, filter.FilterData(findParams, source));
-            Paging<ProjectTask> paging = new Paging<ProjectTask>();
-
-            return paging.PaginateData(findParams, sort.SortData(findParams, filter.FilterData(findParams, source)));
+            source = new Filter<ProjectTask>(projectTaskFilterParams).FilterData(source);
+            source = new Sort<ProjectTask>().SortData(findParams, source);
+            return new Paging<ProjectTask>().PaginateData(findParams, source);
         }
     }
 }

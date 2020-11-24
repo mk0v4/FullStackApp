@@ -5,6 +5,6 @@ namespace Tasker.Service.DataAccess.Interface
 {
     public interface IPaging<T>
     {
-        IPagedList<T> PaginateData(FindParams filterElements, IQueryable<T> data);
+        IPagedList<T> PaginateData(IFindParams filterElements, IQueryable<T> data);
     }
 }

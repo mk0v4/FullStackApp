@@ -7,7 +7,7 @@ namespace Tasker.Service.DataAccess
 {
     public class Sort<T> : ISort<T>
     {
-        public IQueryable<T> SortData(FindParams filterElements, IQueryable<T> data)
+        public IQueryable<T> SortData(IFindParams filterElements, IQueryable<T> data)
         {
             string sortBy = filterElements.SortBy;
             string sortDirection = filterElements.SortDirection;

@@ -14,74 +14,64 @@ namespace Tasker.Service.DataAccess
             this._filterModel = filterModel;
         }
 
-        public IQueryable<T> FilterData(FindParams findParams, IQueryable<T> data)
+        public IQueryable<T> FilterData(IQueryable<T> data)
         {
-            if (_filterModel != null && !String.IsNullOrEmpty(findParams.SearchProperty))
+            if (_filterModel != null)
             {
                 foreach (PropertyInfo property in _filterModel.GetType().GetProperties())
                 {
-                    if (property.Name.Equals(findParams.SearchProperty))
+                    if (property.GetValue(_filterModel, null) != null)
                     {
-                        //object l = property.GetValue(_filterModel, null);
-                        return FilteringData(findParams, data);
+                        return FilteringData(property.Name, property.GetValue(_filterModel, null), data);
                     }
                 }
             }
-            else if (String.IsNullOrEmpty(findParams.SearchProperty))
-            {
-                return FilteringData(findParams, data);
-            }
-            return Enumerable.Empty<T>().AsQueryable();
-
+            return FilteringData(null, null, data);
         }
 
-        private static IQueryable<T> FilteringData(FindParams findParams, IQueryable<T> data)
+        private static IQueryable<T> FilteringData(string property, object value, IQueryable<T> data)
         {
-            if (String.IsNullOrEmpty(findParams.SearchProperty))
+            if (String.IsNullOrEmpty(property))
             {
                 return data;
             }
-            Type searchPropertyType = typeof(T).GetProperty(findParams.SearchProperty).PropertyType;
+            Type searchPropertyType = typeof(T).GetProperty(property).PropertyType;
             if (searchPropertyType == typeof(string))
             {
                 data = data.Where(t =>
-                t.GetType().GetProperty(findParams.SearchProperty).GetValue(t, null) != null ?
-                t.GetType().GetProperty(findParams.SearchProperty).GetValue(t, null).ToString().ToLower()
-                    .Contains(findParams.SearchValue.ToString().ToLower()) :
-                    "".Contains(findParams.SearchValue.ToString()));
+                t.GetType().GetProperty(property).GetValue(t, null) != null ?
+                t.GetType().GetProperty(property).GetValue(t, null).ToString().ToLower()
+                    .Contains(value.ToString().ToLower()) :
+                    "".Contains(value.ToString()));
             }
             else if (searchPropertyType.IsEnum)
             {
-                Type enumType = typeof(T).GetProperty(findParams.SearchProperty).PropertyType;
-                data = data.Where(t => t.GetType().GetProperty(findParams.SearchProperty).GetValue(t, null).ToString()
-                .Equals(Enum.GetName(enumType, findParams.SearchValue)));
+                Type enumType = typeof(T).GetProperty(property).PropertyType;
+                data = data.Where(t => t.GetType().GetProperty(property).GetValue(t, null).ToString()
+                .Equals(Enum.GetName(enumType, value)));
             }
             else if (searchPropertyType == typeof(Nullable<DateTime>))
             {
-                if (findParams.SearchValue != null)
+                if (value != null)
                     data = data.Where(t => DateTime.Compare(Convert.ToDateTime(
-                        t.GetType().GetProperty(findParams.SearchProperty).GetValue(t, null)),
-                        Convert.ToDateTime(findParams.SearchValue)) >= 0);
+                        t.GetType().GetProperty(property).GetValue(t, null)),
+                        Convert.ToDateTime(value)) >= 0);
                 else
-                {
-                    data = data.Where(t => t.GetType().GetProperty(findParams.SearchProperty).GetValue(t, null) == null);
-                }
+                    data = data.Where(t => t.GetType().GetProperty(property).GetValue(t, null) == null);
             }
             else if (searchPropertyType == typeof(bool))
             {
-                data = data.Where(t => t.GetType().GetProperty(findParams.SearchProperty).GetValue(t, null)
-                .Equals(findParams.SearchValue));
+                data = data.Where(t => t.GetType().GetProperty(property).GetValue(t, null)
+                .Equals(value));
             }
             else if (searchPropertyType == typeof(Nullable<TimeSpan>) || searchPropertyType == typeof(TimeSpan))
             {
-                if (findParams.SearchValue != null)
-                    data = data.Where(t => t.GetType().GetProperty(findParams.SearchProperty).GetValue(t, null) != null &&
-                    TimeSpan.Compare((TimeSpan)t.GetType().GetProperty(findParams.SearchProperty).GetValue(t, null),
-                    (TimeSpan)findParams.SearchValue) >= 0);
+                if (value != null)
+                    data = data.Where(t => t.GetType().GetProperty(property).GetValue(t, null) != null &&
+                    TimeSpan.Compare((TimeSpan)t.GetType().GetProperty(property).GetValue(t, null),
+                    (TimeSpan) value) >= 0);
                 else
-                {
-                    data = data.Where(t => t.GetType().GetProperty(findParams.SearchProperty).GetValue(t, null) == null);
-                }
+                    data = data.Where(t => t.GetType().GetProperty(property).GetValue(t, null) == null);
             }
             return data;
         }

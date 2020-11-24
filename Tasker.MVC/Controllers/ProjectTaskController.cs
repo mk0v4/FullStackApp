@@ -11,6 +11,8 @@ using Tasker.MVC.Models;
 using Tasker.Service.Service.Interface;
 using PagedList;
 using Tasker.Service.DataAccess;
+using Tasker.Service.FilterModels;
+using Tasker.Service.DataAccess.Interface;
 
 namespace Tasker.MVC.Controllers
 {
@@ -55,15 +57,16 @@ namespace Tasker.MVC.Controllers
                 = TempDetail(id, searchString, searchTime, searchProperty, pageNumber, sortBy, sortDirection);
 
             int pn = pageNumber ?? 1;
+            IFindParams fp = new FindParams(id, pn, RowNumber, sortBy, sortDirection);
             IPagedList<TimeEntry> timeEntries = new PagedList<TimeEntry>(Enumerable.Empty<TimeEntry>(), 1, 1);
-            if (String.IsNullOrEmpty(searchString) && String.IsNullOrEmpty(searchProperty))
-                timeEntries = await _timeEntryService.Find(new FindParams(id, "", null, pn, RowNumber, sortBy, sortDirection));
-            else if (!String.IsNullOrEmpty(searchString))
-                timeEntries = await _timeEntryService.Find(new FindParams(id, searchProperty, searchString, 
-                    pn, RowNumber, sortBy, sortDirection));
+            if (String.IsNullOrEmpty(searchProperty))
+                timeEntries = await _timeEntryService.Find(null, fp);
+            else if (searchProperty == "Name")
+                timeEntries = await _timeEntryService.Find(new TimeEntryFilterParams { Name = searchString }, fp);
             else if (searchProperty == "TimeSpent")
-                timeEntries = await _timeEntryService.Find(new FindParams(id, searchProperty, searchTime, 
-                    pn, RowNumber, sortBy, sortDirection));
+                timeEntries = await _timeEntryService.Find(new TimeEntryFilterParams { TimeSpent = searchTime }, fp);
+            else if (searchProperty == "Description")
+                timeEntries = await _timeEntryService.Find(new TimeEntryFilterParams { Description = searchString }, fp);
 
             ViewBag.sortByTimeEntry = sortBy;
             ViewBag.sortDirectionTimeEntry = sortDirection;

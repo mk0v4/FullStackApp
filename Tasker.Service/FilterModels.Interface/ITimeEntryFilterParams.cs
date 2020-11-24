@@ -6,6 +6,6 @@ namespace Tasker.Service.FilterModels.Interface
     {
         string Description { get; set; }
         string Name { get; set; }
-        TimeSpan TimeSpent { get; set; }
+        TimeSpan? TimeSpent { get; set; }
     }
 }

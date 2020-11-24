@@ -74,11 +74,9 @@ namespace Tasker.MVC.App_Start
             //TODO - inject
             kernel.Bind<IApplicationDbContext>().To<ApplicationDbContext>().InRequestScope();
             kernel.Bind(typeof(IGenericDataService<Project>)).To(typeof(GenericDataService<Project>));
-            //kernel.Bind<IProjectController>().To<ProjectController>();
             kernel.Bind<IProjectService>().To<ProjectService>();
             kernel.Bind<IProjectTaskService>().To<ProjectTaskService>();
             kernel.Bind<ITimeEntryService>().To<TimeEntryService>();
-            //kernel.Bind<IProjectModel>().To<ProjectModel>();
             kernel.Bind<IMapper>().ToMethod(context =>
                 {
                     var config = new MapperConfiguration(cfg =>
