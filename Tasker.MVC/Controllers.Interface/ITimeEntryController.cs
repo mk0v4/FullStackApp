@@ -1,18 +1,15 @@
 ﻿using System.Threading.Tasks;
-using System.Web.Mvc;
-using Tasker.Model;
+using System.Web.Http;
 using Tasker.Model.Common;
 
 namespace Tasker.WebAPI.Controllers.Interface
 {
     public interface ITimeEntryController
     {
-        ActionResult Create(long taskId);
-        Task<ActionResult> CreateModel(ITimeEntry timeEntryModelModel);
-        Task<ActionResult> Delete(long id);
-        Task<ActionResult> DeleteModel(ITimeEntry timeEntryModel);
-        Task<ActionResult> Details(long id);
-        Task<ActionResult> Update(long id);
-        Task<ActionResult> UpdateModel(ITimeEntry timeEntryModel);
+        Task<IHttpActionResult> Create(ITimeEntry timeEntryModelModel);
+        Task<IHttpActionResult> Delete(ITimeEntry timeEntryModel);
+        Task<IHttpActionResult> Update(ITimeEntry timeEntryModel);
+        Task<IHttpActionResult> Get(long id);
+        Task<IHttpActionResult> Find();
     }
 }

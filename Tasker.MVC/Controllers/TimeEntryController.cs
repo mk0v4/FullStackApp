@@ -1,65 +1,56 @@
 ﻿using System.Threading.Tasks;
-using System.Web.Mvc;
-using Tasker.Model;
+using System.Web.Http;
+using Tasker.Common.Find;
+using Tasker.Common.Find.Interface;
 using Tasker.Model.Common;
+using Tasker.Model.FilterModels;
 using Tasker.Service.Common;
 using Tasker.WebAPI.Controllers.Interface;
 
 namespace Tasker.WebAPI.Controllers
 {
-    public class TimeEntryController : Controller, ITimeEntryController
+    public class TimeEntryController : ApiController, ITimeEntryController
     {
         private readonly ITimeEntryService _timeEntryService;
+
+        private const int RowNumber = 4;
 
         public TimeEntryController(ITimeEntryService timeEntryService)
         {
             this._timeEntryService = timeEntryService;
         }
 
-        public ActionResult Create(long taskId)
+        public async Task<IHttpActionResult> Get(long id)
         {
-            TimeEntry timeEntryModel = new TimeEntry();
-            timeEntryModel.ProjectTaskId = taskId;
-            return View(timeEntryModel);
+            await _timeEntryService.Get(id);
+            return Ok();
+        }
+        public async Task<IHttpActionResult> Find()
+        {
+            IFindParams fp = new FindParams(1, RowNumber, "Name", "desc");
+            await _timeEntryService.Find(new TimeEntryFilterParams { Name = "" }, fp);
+            return Ok();
         }
 
-        public async Task<ActionResult> Delete(long id)
-        {
-            return View(await _timeEntryService.Get(id));
-        }
-
-        public async Task<ActionResult> Update(long id)
-        {
-            return View(await _timeEntryService.Get(id));
-        }
-
-        public async Task<ActionResult> Details(long id)
-        {
-            return View(await _timeEntryService.Get(id));
-        }
-
-        [HttpPost, ActionName("Create")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateModel(ITimeEntry timeEntryModel)
+        [HttpPost]
+        public async Task<IHttpActionResult> Create(ITimeEntry timeEntryModel)
         {
             await _timeEntryService.AddAsync(timeEntryModel);
-            return RedirectToAction("Details", "ProjectTask", new { id = timeEntryModel.ProjectTaskId });
+            return Ok();
         }
 
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteModel(ITimeEntry timeEntryModel)
+        [HttpPost]
+        public async Task<IHttpActionResult> Delete(ITimeEntry timeEntryModel)
         {
             await _timeEntryService.DeleteAsync(timeEntryModel.Id);
-            return RedirectToAction("Details", "ProjectTask", new { id = timeEntryModel.ProjectTaskId });
+            return Ok();
         }
 
-        [HttpPost, ActionName("Update")]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateModel(ITimeEntry timeEntryModel)
+        [HttpPost]
+        public async Task<IHttpActionResult> Update(ITimeEntry timeEntryModel)
         {
             await _timeEntryService.UpdateAsync(timeEntryModel);
-            return RedirectToAction("Details", new { id = timeEntryModel.Id });
+            return Ok();
         }
     }
 }
