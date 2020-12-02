@@ -1,69 +1,64 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Mvc;
-using AutoMapper;
-using Tasker.MVC.Controllers.Interface;
-using Tasker.MVC.Models;
-using Tasker.Service.Models;
-using Tasker.Service.Service.Interface;
+using Tasker.Model;
+using Tasker.Model.Common;
+using Tasker.Service.Common;
+using Tasker.WebAPI.Controllers.Interface;
 
-namespace Tasker.MVC.Controllers
+namespace Tasker.WebAPI.Controllers
 {
     public class TimeEntryController : Controller, ITimeEntryController
     {
         private readonly ITimeEntryService _timeEntryService;
 
-        private readonly IMapper _mapper;
-
-        public TimeEntryController(ITimeEntryService timeEntryService, IMapper mapper)
+        public TimeEntryController(ITimeEntryService timeEntryService)
         {
             this._timeEntryService = timeEntryService;
-            this._mapper = mapper;
         }
 
         public ActionResult Create(long taskId)
         {
-            TimeEntryModel timeEntryModel = new TimeEntryModel();
+            TimeEntry timeEntryModel = new TimeEntry();
             timeEntryModel.ProjectTaskId = taskId;
             return View(timeEntryModel);
         }
 
         public async Task<ActionResult> Delete(long id)
         {
-            return View(_mapper.Map<TimeEntry, TimeEntryModel>(await _timeEntryService.Get(id)));
+            return View(await _timeEntryService.Get(id));
         }
 
         public async Task<ActionResult> Update(long id)
         {
-            return View(_mapper.Map<TimeEntry, TimeEntryModel>(await _timeEntryService.Get(id)));
+            return View(await _timeEntryService.Get(id));
         }
 
         public async Task<ActionResult> Details(long id)
         {
-            return View(_mapper.Map<TimeEntry, TimeEntryModel>(await _timeEntryService.Get(id)));
+            return View(await _timeEntryService.Get(id));
         }
 
         [HttpPost, ActionName("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateModel(TimeEntryModel timeEntryModelModel)
+        public async Task<ActionResult> CreateModel(ITimeEntry timeEntryModel)
         {
-            TimeEntry timeEntry = _mapper.Map<TimeEntryModel, TimeEntry>(timeEntryModelModel);
-            await _timeEntryService.Create(timeEntry);
-            return RedirectToAction("Details", "ProjectTask", new { id = timeEntryModelModel.ProjectTaskId });
+            await _timeEntryService.AddAsync(timeEntryModel);
+            return RedirectToAction("Details", "ProjectTask", new { id = timeEntryModel.ProjectTaskId });
         }
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteModel(TimeEntryModel timeEntryModel)
+        public async Task<ActionResult> DeleteModel(ITimeEntry timeEntryModel)
         {
-            await _timeEntryService.Delete(timeEntryModel.Id);
+            await _timeEntryService.DeleteAsync(timeEntryModel.Id);
             return RedirectToAction("Details", "ProjectTask", new { id = timeEntryModel.ProjectTaskId });
         }
 
         [HttpPost, ActionName("Update")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UpdateModel(TimeEntryModel timeEntryModel)
+        public async Task<ActionResult> UpdateModel(ITimeEntry timeEntryModel)
         {
-            await _timeEntryService.Update(_mapper.Map<TimeEntryModel, TimeEntry>(timeEntryModel));
+            await _timeEntryService.UpdateAsync(timeEntryModel);
             return RedirectToAction("Details", new { id = timeEntryModel.Id });
         }
     }

@@ -34,14 +34,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=3.3.3.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.3.3\lib\net45\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="PagedList, Version=1.17.0.0, Culture=neutral, PublicKeyToken=abbb863e9397c5e1, processorArchitecture=MSIL">
       <HintPath>..\packages\PagedList.1.17.0.0\lib\net40\PagedList.dll</HintPath>
@@ -78,46 +75,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Entity.cs" />
-    <Compile Include="DataAccess.Interface\IApplicationDbContext.cs" />
-    <Compile Include="DataAccess.Interface\IGenericDataService.cs" />
-    <Compile Include="DataAccess\ApplicationDbContext.cs" />
-    <Compile Include="DataAccess\Filter.cs" />
-    <Compile Include="DataAccess\FindParams.cs" />
-    <Compile Include="DataAccess\GenericDataService.cs" />
-    <Compile Include="DataAccess.Interface\IFindParams.cs" />
-    <Compile Include="DataAccess.Interface\IFilter.cs" />
-    <Compile Include="DataAccess.Interface\IPaging.cs" />
-    <Compile Include="DataAccess.Interface\ISort.cs" />
-    <Compile Include="DataAccess\Paging.cs" />
-    <Compile Include="DataAccess\Sort.cs" />
-    <Compile Include="DataAccess\TaskerDbInit.cs" />
-    <Compile Include="Enums\PriorityLevel.cs" />
-    <Compile Include="FilterModels.Interface\IProjectFilterParams.cs" />
-    <Compile Include="FilterModels.Interface\IProjectTaskFilterParams.cs" />
-    <Compile Include="FilterModels.Interface\ITimeEntryFilterParams.cs" />
-    <Compile Include="FilterModels\ProjectFilterParams.cs" />
-    <Compile Include="FilterModels\ProjectTaskFilterParams.cs" />
-    <Compile Include="FilterModels\TimeEntryFilterParams.cs" />
-    <Compile Include="Migrations\202011022122474_InitialDBCreation.cs" />
-    <Compile Include="Migrations\202011022122474_InitialDBCreation.designer.cs">
-      <DependentUpon>202011022122474_InitialDBCreation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202011041540472_TimeSpan.cs" />
-    <Compile Include="Migrations\202011041540472_TimeSpan.designer.cs">
-      <DependentUpon>202011041540472_TimeSpan.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\Project.cs" />
-    <Compile Include="Models\ProjectTask.cs" />
-    <Compile Include="Models\TimeEntry.cs" />
-    <Compile Include="Service.Interface\IProjectTaskService.cs" />
-    <Compile Include="Service.Interface\IProjectService.cs" />
-    <Compile Include="Service.Interface\ITimeEntryService.cs" />
-    <Compile Include="Service\ProjectTaskService.cs" />
-    <Compile Include="Service\ProjectService.cs" />
+    <Compile Include="DIModule.cs" />
+    <Compile Include="ProjectTaskService.cs" />
+    <Compile Include="ProjectService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Service\TimeEntryService.cs" />
+    <Compile Include="TimeEntryService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -127,15 +89,26 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202011022122474_InitialDBCreation.resx">
-      <DependentUpon>202011022122474_InitialDBCreation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202011041540472_TimeSpan.resx">
-      <DependentUpon>202011041540472_TimeSpan.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models.ERDiagam\" />
+    <ProjectReference Include="..\Tasker.Common\Tasker.Common.csproj">
+      <Project>{c4a3a3b1-c0e7-4424-8eaa-34cdd509b580}</Project>
+      <Name>Tasker.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tasker.Model.Common\Tasker.Model.Common.csproj">
+      <Project>{B24E97C9-18F0-498F-BF08-C10AA6F1B5F5}</Project>
+      <Name>Tasker.Model.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tasker.Model\Tasker.Model.csproj">
+      <Project>{0CEE804D-48BF-4C9E-865D-138677C3B000}</Project>
+      <Name>Tasker.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tasker.Repository.Common\Tasker.Repository.Common.csproj">
+      <Project>{1A13B463-4716-44A4-A6B0-6BDF60C13D01}</Project>
+      <Name>Tasker.Repository.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tasker.Service.Common\Tasker.Service.Common.csproj">
+      <Project>{A9620EA1-2F1A-4859-8587-1A07CE8E6839}</Project>
+      <Name>Tasker.Service.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

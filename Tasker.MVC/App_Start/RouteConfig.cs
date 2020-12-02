@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace Tasker.MVC
+namespace Tasker.WebAPI
 {
     public class RouteConfig
     {

@@ -1,25 +1,18 @@
-[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(Tasker.MVC.App_Start.NinjectWebCommon), "Start")]
-[assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(Tasker.MVC.App_Start.NinjectWebCommon), "Stop")]
+[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(Tasker.WebAPI.App_Start.NinjectWebCommon), "Start")]
+[assembly: WebActivatorEx.ApplicationShutdownMethodAttribute(typeof(Tasker.WebAPI.App_Start.NinjectWebCommon), "Stop")]
 
-namespace Tasker.MVC.App_Start
+namespace Tasker.WebAPI.App_Start
 {
     using System;
+    using System.Linq;
     using System.Web;
-    using AutoMapper;
     using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 
     using Ninject;
     using Ninject.Web.Common;
     using Ninject.Web.Common.WebHost;
-    using Tasker.Service.DataAccess;
-    using Tasker.Service.DataAccess.Interface;
-    using Tasker.Service.Models;
-    using Tasker.MVC.Controllers;
-    using Tasker.MVC.Controllers.Interface;
-    using Tasker.MVC.Models;
-    using Tasker.MVC.Models.Interface;
-    using Tasker.Service.Service;
-    using Tasker.Service.Service.Interface;
+    using System.Web.Http;
+    using Ninject.Web.WebApi;
 
     public static class NinjectWebCommon
     {
@@ -49,13 +42,20 @@ namespace Tasker.MVC.App_Start
         /// <returns>The created kernel.</returns>
         private static IKernel CreateKernel()
         {
-            var kernel = new StandardKernel();
+            var settings = new NinjectSettings();
+            settings.LoadExtensions = true;
+
+            settings.ExtensionSearchPatterns = settings.ExtensionSearchPatterns.Union(new string[] { "Tasker.*" }).ToArray();
+
+            var kernel = new StandardKernel(settings);
             try
             {
                 kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
                 kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
 
                 RegisterServices(kernel);
+
+                GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
                 return kernel;
             }
             catch
@@ -71,24 +71,6 @@ namespace Tasker.MVC.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-            //TODO - inject
-            kernel.Bind<IApplicationDbContext>().To<ApplicationDbContext>().InRequestScope();
-            kernel.Bind(typeof(IGenericDataService<Project>)).To(typeof(GenericDataService<Project>));
-            kernel.Bind<IProjectService>().To<ProjectService>();
-            kernel.Bind<IProjectTaskService>().To<ProjectTaskService>();
-            kernel.Bind<ITimeEntryService>().To<TimeEntryService>();
-            kernel.Bind<IMapper>().ToMethod(context =>
-                {
-                    var config = new MapperConfiguration(cfg =>
-                    {
-                        cfg.CreateMap<Project, ProjectModel>().ReverseMap();
-                        cfg.CreateMap<ProjectTask, ProjectTaskModel>().ReverseMap();
-                        cfg.CreateMap<TimeEntry, TimeEntryModel>().ReverseMap();
-                        cfg.ConstructServicesUsing(t => kernel.Get(t));
-                    });
-                    return config.CreateMapper();
-                }).InSingletonScope();
-
         }
     }
 }
