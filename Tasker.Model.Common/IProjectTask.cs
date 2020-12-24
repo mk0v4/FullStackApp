@@ -17,6 +17,5 @@ namespace Tasker.Model.Common
         IProject Project { get; set; }
         long ProjectId { get; set; }
         ICollection<ITimeEntry> TimeEntries { get; set; }
-        IPagedList<ITimeEntry> TimeEntriesPaged { get; set; }
     }
 }

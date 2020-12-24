@@ -20,8 +20,7 @@ namespace Tasker.Model
         public string Description { get; set; }
         public long ProjectId { get; set; }
         public IProject Project { get; set; }
-        public virtual ICollection<ITimeEntry> TimeEntries { get; set; }
-        public IPagedList<ITimeEntry> TimeEntriesPaged { get; set; }
+        public ICollection<ITimeEntry> TimeEntries { get; set; }
 
     }
 }

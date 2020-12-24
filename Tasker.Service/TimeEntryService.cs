@@ -1,11 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using PagedList;
-using Tasker.Common.Find;
 using Tasker.Common.Find.Interface;
-using Tasker.Model;
 using Tasker.Model.Common;
-using Tasker.Model.Common.FilterModels;
 using Tasker.Repository.Common;
 using Tasker.Service.Common;
 
@@ -32,20 +29,22 @@ namespace Tasker.Service
         }
         public async Task<ITimeEntry> Get(long id)
         {
-            return await _timeEntryRepository.Get(id);
+            ITimeEntry timeEntry = await _timeEntryRepository.GetAsync(id);
+            if (timeEntry == null)
+                throw new Exception("Entity not found!");
+            return timeEntry;
 
         }
-        public async Task<IPagedList<ITimeEntry>> Find(ITimeEntryFilterParams timeEntryFilterParams, IFindParams findParams)
+        public async Task<IList<ITimeEntry>> Find(IFindParams findParams)
         {
-            IQueryable<TimeEntry> source = Enumerable.Empty<TimeEntry>().AsQueryable();
-            if (findParams.Id != null)
+            return _timeEntryRepository.Find(findParams);
+        }
+        public void ValidateModel(ITimeEntry timeEntry, Action<string, string> modelError)
+        {
+            if (timeEntry == null)
             {
-                source = (IQueryable<TimeEntry>) await _timeEntryRepository.GetAll();
-                source = source.Where(te => te.ProjectTaskId == findParams.Id);
+                modelError("Model", "Model is null");
             }
-            source = new Filter<TimeEntry>(timeEntryFilterParams).FilterData(source);
-            source = new Sort<TimeEntry>().SortData(findParams, source);
-            return new Paging<TimeEntry>().PaginateData(findParams, source);
         }
     }
 }

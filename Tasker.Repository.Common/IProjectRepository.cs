@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Tasker.Common.Find.Interface;
 using Tasker.Model.Common;
 
 namespace Tasker.Repository.Common
@@ -10,7 +12,7 @@ namespace Tasker.Repository.Common
         Task<int> DeleteAsync(long id);
         Task<int> DeleteAsync(IProject entity);
         Task<int> UpdateAsync(IProject entity);
-        Task<IProject> Get(long id);
-        Task<IQueryable<IProject>> GetAll();
+        Task<IProject> GetAsync(long id);
+        IList<IProject> Find(IFindParams findParams);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using PagedList;
 using Tasker.Common.Enums;
 using Tasker.Model.Common;
@@ -17,8 +18,6 @@ namespace Tasker.Model
         public bool Completed { get; set; }
         [MaxLength(1500)]
         public string Description { get; set; }
-        public virtual ICollection<IProjectTask> Tasks { get; set; }
-
-        public IPagedList<IProjectTask> TasksPaged { get; set; }
+        public ICollection<IProjectTask> Tasks { get; set; }
     }
 }

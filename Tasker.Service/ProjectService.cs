@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using PagedList;
-using Tasker.Common.Find;
 using Tasker.Common.Find.Interface;
-using Tasker.Model;
 using Tasker.Model.Common;
-using Tasker.Model.Common.FilterModels;
 using Tasker.Repository.Common;
 using Tasker.Service.Common;
 
@@ -38,18 +34,21 @@ namespace Tasker.Service
 
         public async Task<IProject> Get(long id)
         {
-            IProject project = await _projectRepository.Get(id);
+            IProject project = await _projectRepository.GetAsync(id);
             if (project == null)
                 throw new Exception("Entity not found!");
             return project;
         }
-        public async Task<IPagedList<IProject>> Find(IProjectFilterParams projectFilterParams, IFindParams findParams)
+        public async Task<IList<IProject>> Find(IFindParams findParams)
         {
-            IQueryable<Project> source = (IQueryable<Project>) await _projectRepository.GetAll();
-            source = new Filter<Project>(projectFilterParams).FilterData(source);
-            source = new Sort<Project>().SortData(findParams, source);
-            return new Paging<Project>().PaginateData(findParams, source);
+            return _projectRepository.Find(findParams);
         }
-
+        public void ValidateModel(IProject project, Action<string, string> modelError)
+        {
+            if (project == null)
+            {
+                modelError("Model", "Model is null");
+            }
+        }
     }
 }

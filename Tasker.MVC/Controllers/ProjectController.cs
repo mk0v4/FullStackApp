@@ -3,122 +3,107 @@ using Tasker.WebAPI.Controllers.Interface;
 using Tasker.Service.Common;
 using Tasker.Model.Common;
 using System.Web.Http;
-using Tasker.Model.FilterModels;
 using Tasker.Common.Find.Interface;
 using Tasker.Common.Find;
+using AutoMapper;
+using Tasker.WebAPI.Models;
+using System;
+using System.Collections.Generic;
 
 namespace Tasker.WebAPI.Controllers
 {
-    public class ProjectController : ApiController, IProjectController
+    /// <summary>
+    /// Project information
+    /// </summary>
+    public class ProjectController : ApiController, IBaseController<ProjectView>
     {
-        private readonly IProjectService _projectService;
-
-        //private readonly IProjectTaskService _projectTaskService;
+        private protected readonly IProjectService _projectService;
+        private protected readonly IMapper _mapper;
 
         private const int RowNumber = 4;
 
-        public ProjectController(IProjectService projectService/*, IProjectTaskService projectTaskService*/)
+        public ProjectController(IProjectService projectService, IMapper mapper)
         {
             this._projectService = projectService;
-            //this._projectTaskService = projectTaskService;
+            this._mapper = mapper;
         }
-
+        /// <summary>
+        /// Gets Project by id
+        /// </summary>
+        /// <param name="id">Unique identifier for Project</param>
+        /// <returns>Project</returns>
+        [Route("api/Project/Get/{id}")]
+        [HttpGet]
         public async Task<IHttpActionResult> Get(long id)
         {
-            await _projectService.Get(id);
-            return Ok();
+            return Ok(_mapper.Map<ProjectView>(await _projectService.Get(id)));
         }
-        public async Task<IHttpActionResult> Find()
+        /// <summary>
+        /// Finds Projects by filter, sort and paging parameters
+        /// </summary>
+        /// <param name="id">Parent id</param>
+        /// <param name="pageNumber">Current page</param>
+        /// <param name="filterBy">Filtering parameter</param>
+        /// <param name="filterCondition">Filtering string</param>
+        /// <param name="sortBy">Sort parameter</param>
+        /// <param name="sortDirection">Sort order</param>
+        /// <returns>List of Projects</returns>
+        [Route("api/Project/Find")]
+        [HttpGet]
+        public async Task<IHttpActionResult> Find(long? id, int? pageNumber, string filterBy, string filterCondition, string sortBy, string sortDirection)
         {
-            IFindParams fp = new FindParams(1, RowNumber, "Name", "desc");
-            await _projectService.Find(new ProjectFilterParams { Name = "" }, fp);
-            return Ok();
+            IFindParams fp = new FindParams(id, pageNumber, filterBy, filterCondition, RowNumber, sortBy, sortDirection);
+            return Ok(_mapper.Map<IList<ProjectView>>(await _projectService.Find(fp)));
         }
-
+        /// <summary>
+        /// Creates new Project
+        /// </summary>
+        /// <param name="projectViewModel">Project view model</param>
+        /// <returns>Http status</returns>
+        [Route("api/Project/Create")]
         [HttpPost]
-        public async Task<IHttpActionResult> Create(IProject projectModel)
+        public async Task<IHttpActionResult> Create(ProjectView projectViewModel)
         {
-            await _projectService.AddAsync(projectModel);
+            _projectService.ValidateModel(_mapper.Map<IProject>(projectViewModel), ModelState.AddModelError);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            await _projectService.AddAsync(_mapper.Map<IProject>(projectViewModel));
             return Ok();
 
         }
-
-        [HttpPost]
+        /// <summary>
+        /// Deletes Project
+        /// </summary>
+        /// <param name="id">Unique identifier for Project</param>
+        /// <returns>Http status</returns>
+        [Route("api/Project/Delete/{id}")]
+        [HttpDelete]
         public async Task<IHttpActionResult> Delete(long id)
         {
-            //Project project = await _projectService.Get(id);
-            //if (project == null)
-            //    return new HttpStatusCodeResult(HttpStatusCode.NotFound);
-            await _projectService.DeleteAsync(id);
+            try
+            {
+                _mapper.Map<IProject>(await _projectService.DeleteAsync(id));
+            } 
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
             return Ok();
         }
-
-        [HttpPost]
-        public async Task<IHttpActionResult> Update(IProject projectModel)
+        /// <summary>
+        /// Updates Project
+        /// </summary>
+        /// <param name="projectViewModel">Project view model</param>
+        /// <returns>Http status</returns>
+        [Route("api/Project/Update")]
+        [HttpPut]
+        public async Task<IHttpActionResult> Update(ProjectView projectViewModel)
         {
-            await _projectService.UpdateAsync(projectModel);
-            //Response.StatusCode = 200;
+            _projectService.ValidateModel(_mapper.Map<IProject>(projectViewModel), ModelState.AddModelError);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            await _projectService.UpdateAsync(_mapper.Map<IProject>(projectViewModel));
             return Ok();
         }
-        //public async Task<IHttpActionResult> Index(string searchString, int? searchInt, DateTime? searchDate,
-        //    bool? searchBool, string searchProperty, int? pageNumber, string sortBy, string sortDirection)
-        //{
-
-        //    int pn = pageNumber ?? 1;
-        //    IFindParams fp = new FindParams(pn, RowNumber, sortBy, sortDirection);
-        //    IPagedList<IProject> projects = new PagedList<IProject>(Enumerable.Empty<Project>(), 1, 1);
-        //    if (String.IsNullOrEmpty(searchProperty))
-        //        projects = await _projectService.Find(null, fp);
-        //    else if (searchProperty == "Name")
-        //        projects = await _projectService.Find(new ProjectFilterParams { Name = searchString}, fp);
-        //    else if (searchProperty == "DueDate")
-        //        projects = await _projectService.Find(new ProjectFilterParams { DueDate = searchDate }, fp);
-        //    else if (searchProperty == "Priority" && searchInt != null)
-        //        projects = await _projectService.Find(new ProjectFilterParams { Priority = (PriorityLevel) searchInt }, fp);
-        //    else if (searchProperty == "Completed" && searchBool != null)
-        //        projects = await _projectService.Find(new ProjectFilterParams { Completed = searchBool }, fp);
-        //    else if (searchProperty == "Description")
-        //        projects = await _projectService.Find(new ProjectFilterParams { Description = searchString }, fp);
-
-        //    StaticPagedList<IProject> pagedViewModel =
-        //        new StaticPagedList<IProject>(projects, projects.GetMetaData());
-
-        //    return Ok();
-        //}
-
-
-        //public async Task<IHttpActionResult> Details(long id, string searchString, int? searchInt, DateTime? searchDate,
-        //    bool? searchBool, TimeSpan? searchTime, string searchProperty, int? pageNumber, string sortBy, string sortDirection)
-        //{
-
-        //    int pn = pageNumber ?? 1;
-        //    IFindParams fp = new FindParams(id, pn, RowNumber, sortBy, sortDirection);
-        //    IPagedList<IProjectTask> projectTasks = new PagedList<IProjectTask>(Enumerable.Empty<IProjectTask>(), 1, 1);
-        //    if (String.IsNullOrEmpty(searchProperty))
-        //        projectTasks = await _projectTaskService.Find(null, fp);
-        //    else if (searchProperty == "Name")
-        //        projectTasks = await _projectTaskService.Find(new ProjectTaskFilterParams { Name = searchString }, fp);
-        //    else if (searchProperty == "DueDate")
-        //        projectTasks = await _projectTaskService.Find(new ProjectTaskFilterParams { DueDate = searchDate }, fp);
-        //    else if (searchProperty == "Priority" && searchInt != null)
-        //        projectTasks = await _projectTaskService.Find(new ProjectTaskFilterParams { Priority = (PriorityLevel) searchInt }, fp);
-        //    else if (searchProperty == "EstimatedTime")
-        //        projectTasks = await _projectTaskService.Find(new ProjectTaskFilterParams { EstimatedTime = searchTime }, fp);
-        //    else if (searchProperty == "Completed" && searchBool != null)
-        //        projectTasks = await _projectTaskService.Find(new ProjectTaskFilterParams { Completed = searchBool }, fp);
-        //    else if (searchProperty == "Description")
-        //        projectTasks = await _projectTaskService.Find(new ProjectTaskFilterParams { Description = searchString }, fp);
-
-        //    IProject projectTaskModel = await _projectService.Get(id);
-        //    if (projectTaskModel == null)
-        //        return new HttpResponseMessage(HttpStatusCode.NotFound);
-
-        //    StaticPagedList<IProjectTask> pagedViewModel =
-        //        new StaticPagedList<IProjectTask>(projectTasks, projectTasks.GetMetaData());
-        //    projectTaskModel.TasksPaged = pagedViewModel;
-
-        //    return Ok();
-        //}
-
     }
 }

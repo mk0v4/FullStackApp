@@ -16,11 +16,12 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    @Html.ActionLink("Tasker", "Index", "Project", new { area = "" }, new { @class = "navbar-brand" })
+                    <a class="navbar-brand" href="https://localhost:44332/api/project/find?id=&pageNumber=1&filterBy=Name&filterCondition=Project&sortBy=Id&sortDirection=desc">Find Projects</a>
+                    <a class="navbar-brand" href="https://localhost:44332/api/projectTask/find?id=2&pageNumber=1&filterBy=Name&filterCondition=Project&sortBy=Id&sortDirection=asc">Find Tasks</a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li>@Html.ActionLink("Projects", "Index", "Project")</li>
+                        <li>@Html.ActionLink("API", "Index", "Help", new { area = "" }, null)</li>
                     </ul>
                 </div>
             </div>

@@ -4,6 +4,6 @@ namespace Tasker.Common.Find.Interface
 {
     public interface IFilter<T>
     {
-        IQueryable<T> FilterData(IQueryable<T> data);
+        IQueryable<T> FilterData(IFindParams findParams, IQueryable<T> data);
     }
 }

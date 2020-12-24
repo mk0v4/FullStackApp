@@ -6,9 +6,12 @@ namespace Tasker.Common.Find
 {
     public class Paging<T> : IPaging<T>
     {
-        public IPagedList<T> PaginateData(IFindParams filterElements, IQueryable<T> data)
+        public IQueryable<T> PaginateData(IFindParams filterElements, IQueryable<T> data)
         {
-            return data.ToPagedList(filterElements.PageNumber ?? 1, filterElements.NumberOfRows);
+            return data.Skip(
+                ((int) (filterElements.PageNumber == null ? 1 : filterElements.PageNumber) - 1) 
+                * filterElements.NumberOfRows)
+                .Take(filterElements.NumberOfRows);
         }
     }
 }

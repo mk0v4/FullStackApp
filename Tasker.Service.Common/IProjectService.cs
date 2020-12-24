@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
-using PagedList;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Tasker.Common.Find.Interface;
 using Tasker.Model.Common;
-using Tasker.Model.Common.FilterModels;
 
 namespace Tasker.Service.Common
 {
@@ -12,6 +12,7 @@ namespace Tasker.Service.Common
         Task<IProject> Get(long id);
         Task<int> DeleteAsync(long id);
         Task<int> UpdateAsync(IProject project);
-        Task<IPagedList<IProject>> Find(IProjectFilterParams projectFilterParams, IFindParams filteringElements);
+        Task<IList<IProject>> Find(IFindParams findParams);
+        void ValidateModel(IProject project, Action<string, string> AddModelError);
     }
 }

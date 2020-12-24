@@ -58,13 +58,9 @@
     <Compile Include="Entities\ProjectEntity.cs" />
     <Compile Include="Entities\ProjectTaskEntity.cs" />
     <Compile Include="Entities\TimeEntryEntity.cs" />
-    <Compile Include="Migrations\202011022122474_InitialDBCreation.cs" />
-    <Compile Include="Migrations\202011022122474_InitialDBCreation.Designer.cs">
-      <DependentUpon>202011022122474_InitialDBCreation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202011041540472_TimeSpan.cs" />
-    <Compile Include="Migrations\202011041540472_TimeSpan.Designer.cs">
-      <DependentUpon>202011041540472_TimeSpan.cs</DependentUpon>
+    <Compile Include="Migrations\202012210925122_InitialDBCreation.cs" />
+    <Compile Include="Migrations\202012210925122_InitialDBCreation.designer.cs">
+      <DependentUpon>202012210925122_InitialDBCreation.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -79,16 +75,13 @@
     <Folder Include="Entities.ERDiagam\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202011022122474_InitialDBCreation.resx">
-      <DependentUpon>202011022122474_InitialDBCreation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202011041540472_TimeSpan.resx">
-      <DependentUpon>202011041540472_TimeSpan.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202012210925122_InitialDBCreation.resx">
+      <DependentUpon>202012210925122_InitialDBCreation.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

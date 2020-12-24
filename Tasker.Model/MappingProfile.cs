@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Tasker.DAL.Entities;
+using Tasker.Model.Common;
 
 namespace Tasker.Model
 {
@@ -12,9 +13,9 @@ namespace Tasker.Model
     {
         public MappingProfile()
         {
-            CreateMap<Project, ProjectEntity>().ReverseMap();
-            CreateMap<ProjectTask, ProjectTaskEntity>().ReverseMap();
-            CreateMap<TimeEntry, TimeEntryEntity>().ReverseMap();
+            CreateMap<IProject, ProjectEntity>().ReverseMap();
+            CreateMap<IProjectTask, ProjectTaskEntity>().ReverseMap();
+            CreateMap<ITimeEntry, TimeEntryEntity>().ReverseMap();
         }
     }
 }

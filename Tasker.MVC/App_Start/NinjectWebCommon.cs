@@ -13,6 +13,7 @@ namespace Tasker.WebAPI.App_Start
     using Ninject.Web.Common.WebHost;
     using System.Web.Http;
     using Ninject.Web.WebApi;
+    using AutoMapper;
 
     public static class NinjectWebCommon
     {
@@ -42,12 +43,14 @@ namespace Tasker.WebAPI.App_Start
         /// <returns>The created kernel.</returns>
         private static IKernel CreateKernel()
         {
-            var settings = new NinjectSettings();
-            settings.LoadExtensions = true;
+            //var settings = new NinjectSettings();
+            //settings.LoadExtensions = true;
 
-            settings.ExtensionSearchPatterns = settings.ExtensionSearchPatterns.Union(new string[] { "Tasker.*" }).ToArray();
+            //settings.ExtensionSearchPatterns = settings.ExtensionSearchPatterns.Union(new string[] { "Tasker.Model.*",
+            //"Tasker.Repository.*", "Tasker.Service.*", "Tasker.WebAPI.*"}).ToArray();
 
-            var kernel = new StandardKernel(settings);
+            //var kernel = new StandardKernel(settings);
+            var kernel = new StandardKernel();
             try
             {
                 kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
@@ -71,6 +74,19 @@ namespace Tasker.WebAPI.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
+            kernel.Load<Tasker.Model.DIModule>();
+            kernel.Load<Tasker.Repository.DIModule>();
+            kernel.Load<Tasker.Service.DIModule>();
+            kernel.Bind<IMapper>().ToMethod(context =>
+            {
+                var config = new MapperConfiguration(cfg =>
+                {
+                    cfg.AddProfile<MappingProfile>();
+                    cfg.AddProfile<Tasker.Model.MappingProfile>();
+                    cfg.ConstructServicesUsing(t => kernel.Get(t));
+                });
+                return config.CreateMapper();
+            }).InSingletonScope();
         }
     }
 }

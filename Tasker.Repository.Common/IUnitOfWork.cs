@@ -11,7 +11,7 @@ namespace Tasker.Repository.Common
         Task<int> DeleteAsync<T>(T entity) where T : class;
         Task<int> UpdateAsync<T>(T entity) where T : class;
         Task<int> CommitAsync();
-        Task<T> Get<T>(long id) where T : class;
-        Task<IQueryable<T>> GetAll<T>() where T : class;
+        Task<T> GetAsync<T>(long id) where T : class;
+        IQueryable<T> Set<T>() where T : class;
     }
 }

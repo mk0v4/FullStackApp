@@ -67,6 +67,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Tasker.Common\Tasker.Common.csproj">
+      <Project>{C4A3A3B1-C0E7-4424-8EAA-34CDD509B580}</Project>
+      <Name>Tasker.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Tasker.DAL\Tasker.DAL.csproj">
       <Project>{8AAB1C36-F892-48DF-9598-FBA527CEC3E6}</Project>
       <Name>Tasker.DAL</Name>

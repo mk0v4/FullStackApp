@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
+using Tasker.Common.Enums;
 using Tasker.Common.Find.Interface;
 
 namespace Tasker.Common.Find
@@ -14,13 +16,20 @@ namespace Tasker.Common.Find
             this._filterModel = filterModel;
         }
 
-        public IQueryable<T> FilterData(IQueryable<T> data)
+        public IQueryable<T> FilterData(IFindParams findParams, IQueryable<T> data)
         {
             if (_filterModel != null)
             {
+                _filterModel.GetType().GetProperties().Where(x => !String.IsNullOrEmpty(findParams.FilterBy)).Select(x => x.Name).Distinct();
+
+                foreach (PropertyInfo property in _filterModel.GetType().GetProperties().Where(x => x.Name.Equals(findParams.FilterBy)).Distinct())
+                {
+                    property.SetValue(_filterModel, ObjectType(property, findParams.FilterCondition));
+                }
+
                 foreach (PropertyInfo property in _filterModel.GetType().GetProperties())
                 {
-                    if (property.GetValue(_filterModel, null) != null)
+                    if (findParams.FilterBy.Equals(property.Name) && property.GetValue(_filterModel, null) != null)
                     {
                         return FilteringData(property.Name, property.GetValue(_filterModel, null), data);
                     }
@@ -35,45 +44,70 @@ namespace Tasker.Common.Find
             {
                 return data;
             }
+            var parameterExpr = Expression.Parameter(typeof(T), "t");
+            var propertyExpr = Expression.Property(parameterExpr, property);
+            var valueExpr = Expression.Constant(value);
+            var convectValueExpr = Expression.Convert(valueExpr, typeof(T).GetProperty(property).PropertyType);
+            Expression<Func<T, bool>> predicate = null;
+
             Type searchPropertyType = typeof(T).GetProperty(property).PropertyType;
             if (searchPropertyType == typeof(string))
             {
-                data = data.Where(t =>
-                t.GetType().GetProperty(property).GetValue(t, null) != null ?
-                t.GetType().GetProperty(property).GetValue(t, null).ToString().ToLower()
-                    .Contains(value.ToString().ToLower()) :
-                    "".Contains(value.ToString()));
+                var method = "Contains";
+                var bodyExpr = Expression.Call(propertyExpr, method, null, convectValueExpr);
+                predicate = Expression.Lambda<Func<T, bool>>(bodyExpr, parameterExpr);
             }
             else if (searchPropertyType.IsEnum)
             {
-                Type enumType = typeof(T).GetProperty(property).PropertyType;
-                data = data.Where(t => t.GetType().GetProperty(property).GetValue(t, null).ToString()
-                .Equals(Enum.GetName(enumType, value)));
+                var equalExpr = Expression.Equal(propertyExpr, convectValueExpr);
+                predicate = Expression.Lambda<Func<T, bool>>(equalExpr, parameterExpr);
             }
             else if (searchPropertyType == typeof(Nullable<DateTime>))
             {
-                if (value != null)
-                    data = data.Where(t => DateTime.Compare(Convert.ToDateTime(
-                        t.GetType().GetProperty(property).GetValue(t, null)),
-                        Convert.ToDateTime(value)) >= 0);
-                else
-                    data = data.Where(t => t.GetType().GetProperty(property).GetValue(t, null) == null);
+                var greaterThanOrEqualExpr = Expression.GreaterThanOrEqual(propertyExpr, convectValueExpr);
+                predicate = Expression.Lambda<Func<T, bool>>(greaterThanOrEqualExpr, parameterExpr);
             }
             else if (searchPropertyType == typeof(bool))
             {
-                data = data.Where(t => t.GetType().GetProperty(property).GetValue(t, null)
-                .Equals(value));
+                var equalExpr = Expression.Equal(propertyExpr, convectValueExpr);
+                predicate = Expression.Lambda<Func<T, bool>>(equalExpr, parameterExpr);
             }
             else if (searchPropertyType == typeof(Nullable<TimeSpan>) || searchPropertyType == typeof(TimeSpan))
             {
-                if (value != null)
-                    data = data.Where(t => t.GetType().GetProperty(property).GetValue(t, null) != null &&
-                    TimeSpan.Compare((TimeSpan)t.GetType().GetProperty(property).GetValue(t, null),
-                    (TimeSpan) value) >= 0);
-                else
-                    data = data.Where(t => t.GetType().GetProperty(property).GetValue(t, null) == null);
+                var greaterThanOrEqualExpr = Expression.GreaterThanOrEqual(propertyExpr, convectValueExpr);
+                predicate = Expression.Lambda<Func<T, bool>>(greaterThanOrEqualExpr, parameterExpr);
             }
-            return data;
+
+            return predicate != null ? data = data.Where(predicate) : data;
+        }
+
+        private object ObjectType(PropertyInfo propertyInfo, object filter)
+        {
+            if (propertyInfo.PropertyType == typeof(string))
+            {
+                return filter != null ? filter.ToString() : null;
+            }
+            else if (propertyInfo.PropertyType == typeof(Nullable<PriorityLevel>))
+            {
+                return filter != null ? (Nullable<PriorityLevel>)Convert.ToInt32(filter) : (Nullable<PriorityLevel>)null;
+            }
+            else if (propertyInfo.PropertyType == typeof(Nullable<DateTime>))
+            {
+                return filter != null ? Convert.ToDateTime(filter) : (Nullable<DateTime>)null;
+            }
+            else if (propertyInfo.PropertyType == typeof(Nullable<bool>))
+            {
+                return filter != null ? Convert.ToBoolean(filter) : (Nullable<bool>)null;
+            }
+            else if (propertyInfo.PropertyType == typeof(TimeSpan))
+            {
+                return (TimeSpan) filter;
+            }
+            else if (propertyInfo.PropertyType == typeof(Nullable<TimeSpan>))
+            {
+                return filter != null ? (Nullable<TimeSpan>) TimeSpan.Parse(filter.ToString()) : (Nullable<TimeSpan>)null;
+            }
+            return filter;
         }
     }
 }

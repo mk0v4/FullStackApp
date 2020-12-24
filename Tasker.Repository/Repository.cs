@@ -1,11 +1,13 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Tasker.DAL.Entities.Common;
 using Tasker.Repository.Common;
 
 namespace Tasker.Repository
 {
-    public class Repository : IRepository
+    public abstract class Repository : IRepository
     {
         private protected readonly IUnitOfWork _unitOfWork;
         public Repository(IUnitOfWork unitOfWork)
@@ -32,13 +34,13 @@ namespace Tasker.Repository
             await _unitOfWork.UpdateAsync<T>(entity);
             return await _unitOfWork.CommitAsync();
         }
-        public virtual async Task<T> Get<T>(long id) where T : Entity
+        public virtual async Task<T> GetAsync<T>(long id) where T : Entity
         {
-            return await _unitOfWork.Get<T>(id);
+            return await _unitOfWork.GetAsync<T>(id);
         }
-        public virtual async Task<IQueryable<T>> GetAll<T>() where T : Entity
-        {
-            return await _unitOfWork.GetAll<T>();
+        public virtual IQueryable<T> Find<T>() where T : Entity
+        { 
+            return _unitOfWork.Set<T>();
         }
     }
 }

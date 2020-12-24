@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using PagedList;
 using Tasker.Common.Enums;
 using Tasker.Model;
@@ -15,6 +16,6 @@ namespace Tasker.Model.Common
         string Name { get; set; }
         PriorityLevel Priority { get; set; }
         ICollection<IProjectTask> Tasks { get; set; }
-        IPagedList<IProjectTask> TasksPaged { get; set; }
+
     }
 }

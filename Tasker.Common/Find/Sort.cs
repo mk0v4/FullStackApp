@@ -16,17 +16,25 @@ namespace Tasker.Common.Find
                 sortBy = "Id";
                 sortDirection = "asc";
             }
-            var param = Expression.Parameter(typeof(T), "item");
-
-            var sortExpression = Expression.Lambda<Func<T, object>>
-                (Expression.Convert(Expression.Property(param, sortBy), typeof(object)), param);
+            string sortMethod = "";
             switch (sortDirection.ToLower())
             {
                 case "asc":
-                    return data.OrderBy<T, object>(sortExpression);
+                    sortMethod = "OrderBy";
+                    break;
+                case "desc":
+                    sortMethod = "OrderByDescending";
+                    break;
                 default:
-                    return data.OrderByDescending<T, object>(sortExpression);
+                    sortMethod = "OrderByDescending";
+                    break;
             }
+            var param = Expression.Parameter(typeof(T), "item");
+            var select = Expression.Lambda(Expression.Property(param, sortBy), param);
+            Expression query = Expression.Call(typeof(Queryable), sortMethod, new Type[] {
+                data.ElementType, typeof(T).GetProperty(sortBy).PropertyType }, data.Expression, select);
+
+            return data.Provider.CreateQuery<T>(query);
         }
     }
 }

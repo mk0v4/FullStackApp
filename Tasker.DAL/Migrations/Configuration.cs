@@ -1,16 +1,18 @@
-﻿namespace Tasker.Service.Migrations
+﻿namespace Tasker.DAL.Migrations
 {
+    using System;
+    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using Tasker.DAL.DataAccess;
+    using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<ApplicationDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<Tasker.DAL.DataAccess.ApplicationDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(ApplicationDbContext context)
+        protected override void Seed(Tasker.DAL.DataAccess.ApplicationDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 

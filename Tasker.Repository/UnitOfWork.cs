@@ -10,12 +10,12 @@ using Tasker.Repository.Common;
 
 namespace Tasker.Repository
 {
-    public abstract class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private protected readonly IApplicationDbContext _dbContext;
         public UnitOfWork(IApplicationDbContext context)
         {
-            if (_dbContext == null)
+            if (context == null)
             {
                 throw new ArgumentNullException("DbContext");
             }
@@ -72,16 +72,10 @@ namespace Tasker.Repository
             return Task.FromResult(1);
         }
 
-        public async Task<T> Get<T>(long id) where T : class
+        public async Task<T> GetAsync<T>(long id) where T : class
         {
             T entity = await _dbContext.Set<T>().FindAsync(id);
             return entity;
-        }
-
-        public async Task<IQueryable<T>> GetAll<T>() where T : class
-        {
-            IEnumerable<T> entities = await _dbContext.Set<T>().ToListAsync();
-            return entities.AsQueryable();
         }
         public async Task<int> CommitAsync()
         {
@@ -92,6 +86,11 @@ namespace Tasker.Repository
                 scope.Complete();
             }
             return result;
+        }
+
+        public IQueryable<T> Set<T> () where T : class
+        {
+            return _dbContext.Set<T>();
         }
         public void Dispose()
         {
